@@ -38,6 +38,9 @@ public class Aircraft : MonoBehaviour
 
     void Update()
     { 
+
+
+
         //Roll
         rollAxis = Mathf.Clamp(rollMultiplyer * Input.GetAxis("Roll"), minRoll, maxRoll) * Time.deltaTime;
         rigidbody.AddTorque(transform.forward * rollAxis);
@@ -53,11 +56,10 @@ public class Aircraft : MonoBehaviour
 
         //Thrust
         thrust = Mathf.Clamp(thrust + Input.GetAxis("Thrust"), 0f, 100f);
-        Debug.Log(thrust);
         throttle.value = thrust;
         rigidbody.AddForce(transform.forward * thrust * thrustMultiplyer * Time.deltaTime);
 
-
+        
         //Gravity
         rigidbody.AddForce(Vector3.down * gravity);
 
