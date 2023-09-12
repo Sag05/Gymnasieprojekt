@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,18 +29,23 @@ public class Aircraft : MonoBehaviour
     float gravity = 9.8f;
 
     public Slider throttle;
+    public TextMeshProUGUI speedIndicator;
+
+    float speed;
+
+    float speedE;
+    Vector3 previousPosition;
     
 
     void Start()
     {
         rigidbody = gameObject.GetComponent<Rigidbody>();
-
+        StartCoroutine(SpeedReckoner());
     }
 
     void Update()
     { 
-
-
+        speedE = 
 
         //Roll
         rollAxis = Mathf.Clamp(rollMultiplyer * Input.GetAxis("Roll"), minRoll, maxRoll) * Time.deltaTime;
@@ -53,21 +59,43 @@ public class Aircraft : MonoBehaviour
         pitchAxis = Mathf.Clamp(pitchMultiplyer * Input.GetAxis("Pitch"), minPitch, maxPitch) * Time.deltaTime;
         rigidbody.AddTorque(transform.right * pitchAxis);
 
-
         //Thrust
         thrust = Mathf.Clamp(thrust + Input.GetAxis("Thrust"), 0f, 100f);
         throttle.value = thrust;
         rigidbody.AddForce(transform.forward * thrust * thrustMultiplyer * Time.deltaTime);
 
-        
         //Gravity
         rigidbody.AddForce(Vector3.down * gravity);
 
         //Lift
         lift = gravity;
         rigidbody.AddForce(transform.up * lift);
-
-
     }
 
+    float updateDelay = 0.2f;
+
+    private IEnumerator SpeedReckoner()
+    {
+        YieldInstruction timedWait = new WaitForSeconds(updateDelay);
+        Vector3 lastPosition = transform.position;
+        float lastTimestamp = Time.time;
+
+        while (enabled)
+        {
+            yield return timedWait;
+
+            var deltaPosition = (transform.position - lastPosition).magnitude;
+            var deltaTime = Time.time - lastTimestamp;
+
+            if (Mathf.Approximately(deltaPosition, 0f)) // Clean up "near-zero" displacement
+                deltaPosition = 0f;
+
+            speed = (deltaPosition / deltaTime) * 100;
+            speedIndicator.text = Mathf.RoundToInt(speed).ToString();
+
+            lastPosition = transform.position;
+            lastTimestamp = Time.time;
+        }
+    }
 }
+ 
