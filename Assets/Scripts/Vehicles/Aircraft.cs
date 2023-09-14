@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -25,27 +26,32 @@ public class Aircraft : MonoBehaviour
     public float maxPitch;
     public float minPitch;
 
-    float lift = 0;
     float gravity = 9.8f;
+    
+    float lift;
+    public float liftMultiplyer;
+    public float maxLift;
+    float rotationMultiplyer;
+
 
     public Slider throttle;
     public TextMeshProUGUI speedIndicator;
 
     float speed;
 
-    float speedE;
-    Vector3 previousPosition;
-    
+
 
     void Start()
     {
         rigidbody = gameObject.GetComponent<Rigidbody>();
-        StartCoroutine(SpeedReckoner());
     }
 
     void Update()
-    { 
-        speedE = 
+    {
+        speed = Mathf.RoundToInt(rigidbody.velocity.x + rigidbody.velocity.y + rigidbody.velocity.z * 10);
+        speedIndicator.text = speed.ToString();
+
+        rotationMultiplyer = 
 
         //Roll
         rollAxis = Mathf.Clamp(rollMultiplyer * Input.GetAxis("Roll"), minRoll, maxRoll) * Time.deltaTime;
@@ -68,34 +74,9 @@ public class Aircraft : MonoBehaviour
         rigidbody.AddForce(Vector3.down * gravity);
 
         //Lift
-        lift = gravity;
+
+        lift = Mathf.Clamp(liftMultiplyer * speed / rotationMultiplyer, 0, maxLift);
         rigidbody.AddForce(transform.up * lift);
-    }
-
-    float updateDelay = 0.2f;
-
-    private IEnumerator SpeedReckoner()
-    {
-        YieldInstruction timedWait = new WaitForSeconds(updateDelay);
-        Vector3 lastPosition = transform.position;
-        float lastTimestamp = Time.time;
-
-        while (enabled)
-        {
-            yield return timedWait;
-
-            var deltaPosition = (transform.position - lastPosition).magnitude;
-            var deltaTime = Time.time - lastTimestamp;
-
-            if (Mathf.Approximately(deltaPosition, 0f)) // Clean up "near-zero" displacement
-                deltaPosition = 0f;
-
-            speed = (deltaPosition / deltaTime) * 100;
-            speedIndicator.text = Mathf.RoundToInt(speed).ToString();
-
-            lastPosition = transform.position;
-            lastTimestamp = Time.time;
-        }
     }
 }
  
