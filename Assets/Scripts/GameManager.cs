@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    const float gravity = 9.82f;
+
     // Start is called before the first frame update
     void Start()
     {

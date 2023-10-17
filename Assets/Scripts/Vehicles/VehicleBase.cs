@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.Vehicles.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,14 @@ namespace Assets.Scripts.Vehicles
     {
         public VehicleConfigurationBase VehicleConfiguration { get; set; }
 
-        public Rigidbody VehicleBody;
+        public IList<ComponentBase> VehicleComponents { get; set; }
+
+        public float Mass { get; set; }
+
+        /// <summary>
+        /// Rigidbody of the vehicle
+        /// </summary>
+        public Rigidbody VehicleBody { get; set; }
 
         private float dragCoefficient;
 
@@ -27,7 +35,21 @@ namespace Assets.Scripts.Vehicles
 
         public void Start()
         {
-            this.VehicleBody = gameObject.GetComponent<Rigidbody>();
+            //Apply VehicleConfiguration
+            this.Mass = this.VehicleConfiguration.Mass;
+
+
+            if (this.gameObject.GetComponent<Rigidbody>() is not null)
+            {
+                this.VehicleBody = this.gameObject.GetComponent<Rigidbody>();
+            }
+            else
+            {
+                this.VehicleBody = this.gameObject.AddComponent<Rigidbody>();
+            }
+
+            //Apply mass to rigidbody
+            this.VehicleBody.mass = this.Mass;
         }
     }
 }

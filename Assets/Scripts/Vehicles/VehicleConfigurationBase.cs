@@ -8,12 +8,13 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
+        public float Mass { get; set; } 
     }
 
     public class AircraftConfiguration : VehicleConfigurationBase
     {
-        
-        public float optimalLiftSpeedAtZeroAoA { get; set; }
+
+        public float OptimalLiftSpeedAtZeroAoA { get; set; }
 
     }
 }

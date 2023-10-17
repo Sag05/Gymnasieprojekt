@@ -10,7 +10,8 @@ namespace Assets.Scripts.Vehicles.Components
     public class AircraftEngine : ComponentBase
     {
         public AircraftEngine(VehicleBase vehicle) : base(vehicle) { }
-        public float TurbineMaxRPM { get; set; }
+        public float TurbineMaxRPM { get => turbineMaxRPM; set { if (value <= 0) throw new ArgumentOutOfRangeException("TurbineMaxRPM", value, "TargetMaxRPM can not be less than or equal to 0"); this.turbineMaxRPM = value; } }
+        private float turbineMaxRPM;
         public float TurbineMinRPM { get; set; }
         public float TurbineAcceleration { get; set; }
         public bool EngineEnabled { get; set; }
@@ -20,6 +21,11 @@ namespace Assets.Scripts.Vehicles.Components
         /// </summary>
         public float TurbineRPM { get; set; }
 
+        /// <summary>
+        /// The current thrust factor, measured in 0-1
+        /// </summary>
+        public float TurbineThrustFactor { get => this.TurbineRPM / this.TurbineMaxRPM;}
+        
         /// <summary>
         /// Target RPM fac
         /// </summary>
@@ -53,9 +59,8 @@ namespace Assets.Scripts.Vehicles.Components
             this.TurbineRPM +=
                 (this.TurbineAcceleration * this.currentTargetRPMFactor * (this.EngineEnabled ? 1 : 0));
 
-            // if (this.TurbineRPM == float.PositiveInfinity) this.TurbineRPM = 0;
-
-            UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor);
+            // if (this.TurbineRPM == float.PositiveInfinity) this.TurbineRPM = 0
+            ///UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor);
             return true;
         }
     }

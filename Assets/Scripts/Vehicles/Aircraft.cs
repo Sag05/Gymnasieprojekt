@@ -11,33 +11,9 @@ public class Aircraft : VehicleBase
 {
     float throttle;
 
-    public AircraftEngine[] JetEngines;
-
-    public float thrustMultiplier;
-
-    float rollAxis;
     float rollInput;
-    public float rollMultiplier;
-    public float maxRoll;
-    public float minRoll;
-
-    float yawAxis;
     float yawInput;
-    public float yawMultiplier;
-    public float maxYaw;
-    public float minYaw;
-
-    float pitchAxis;
     float pitchInput;
-    public float pitchMultiplier;
-    public float maxPitch;
-    public float minPitch;
-
-    float gravity = 9.82f;
-    public float mass;
-    
-    float lift;
-    public float liftMultiplier;
 
     float throttleInput;
     public Slider throttleSlider;
@@ -45,11 +21,12 @@ public class Aircraft : VehicleBase
 
     float speed;
 
-    void Start()
+    new void Start()
     {
-        this.JetEngines = new AircraftEngine[]
+
+        this.VehicleComponents = new ComponentBase[]
         {
-            new AircraftEngine()
+            new AircraftEngine(this)
             {
                 HitPoints = 100f,
                 TurbineMaxRPM = 20000,
@@ -58,29 +35,41 @@ public class Aircraft : VehicleBase
         };
         this.VehicleConfiguration = new AircraftConfiguration()
         {
-            optimalLiftSpeedAtZeroAoA = 20
+            OptimalLiftSpeedAtZeroAoA = 20
         };
 
-        this.mass = this.VehicleBody.mass;
+        base.Start();
+
+        this.Mass = this.VehicleBody.mass;
+        //Debug.Log("Mass rigidbody mass: " + this.VehicleBody.mass);
     }
 
     void Update()
     {
-        rollInput = Input.GetAxis("Roll");
-        yawInput = Input.GetAxis("Yaw");
-        pitchInput =  Input.GetAxis("Pitch");
-        throttleInput = Input.GetAxis("Throttle");
+        this.rollInput = Input.GetAxis("Roll");
+        this.yawInput = Input.GetAxis("Yaw");
+        this.pitchInput =  Input.GetAxis("Pitch");
+        this.throttleInput = Input.GetAxis("Throttle");
     }
 
     void FixedUpdate()
     {
-        throttle = Mathf.Clamp(throttle + throttleInput, 0f, 100f);
-        throttleSlider.value = throttle;
+        //Set throttle
+        this.throttle = Mathf.Clamp(this.throttle + this.throttleInput, 0f, 100f);
+        this.throttleSlider.value = this.throttle;
 
-        foreach (AircraftEngine engine in this.JetEngines)
+        //Set speed indicator
+        this.speed = this.VehicleBody.velocity.magnitude * 10;
+        this.speedIndicator.text = Mathf.Round(this.speed).ToString();
+
+        foreach (ComponentBase component in this.VehicleComponents)
         {
-            engine.TargetRPMFactor = throttle / 100f;
-            engine.Tick();
+            if(component is AircraftEngine)
+            {
+                AircraftEngine engine = (AircraftEngine)component;
+                engine.TargetRPMFactor = throttle / 100f;
+                engine.Tick();
+            }
         }
 
         // speed = VehicleBody.velocity.magnitude * 10;

@@ -44,17 +44,16 @@ public class FreeTrackClientDll64 : MonoBehaviour
             Debug.Log("FTGetData returned false. FreeTrack likely not working.");
             return;
         }
-        
+
         storedId = FreeTrackDataRef.dataid;
     }
 
     void Update()
     {
-
-        Debug.Log(FreeTrackDataRef.dataid);
+        //Debug.Log(FreeTrackDataRef.dataid);
         if (FreeTrackDataRef.dataid == storedId)
-        {
-            Debug.Log("Tracking dissabled");
+        { 
+            //Debug.Log("Tracking disabled");
             tracking = false;
         }
         else
@@ -63,7 +62,7 @@ public class FreeTrackClientDll64 : MonoBehaviour
         }
 
         FreeTrackClientDll64.FTGetData(ref FreeTrackDataRef);
-        
+
         //Pitch = x, Yaw = y, Roll = z
         rotation = new Vector3(FreeTrackDataRef.Pitch, FreeTrackDataRef.Yaw, FreeTrackDataRef.Roll);
         rotation *= Mathf.Rad2Deg;
