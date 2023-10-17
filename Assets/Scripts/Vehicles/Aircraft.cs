@@ -8,38 +8,40 @@ using UnityEngine.UI;
 public class Aircraft : MonoBehaviour
 {
     Rigidbody rigidbody;
-    float thrust;
+    float throttle;
     public float thrustMultiplyer;
 
     float rollAxis;
+    float rollInput;
     public float rollMultiplyer;
     public float maxRoll;
     public float minRoll;
 
     float yawAxis;
+    float yawInput;
     public float yawMultiplyer;
     public float maxYaw;
     public float minYaw;
 
     float pitchAxis;
+    float pitchInput;
     public float pitchMultiplyer;
     public float maxPitch;
     public float minPitch;
 
     float gravity = 9.8f;
+    public float mass;
     
     float lift;
     public float liftMultiplyer;
     public float maxLift;
     float rotationMultiplyer;
 
-
-    public Slider throttle;
+    float throttleInput;
+    public Slider throttleSlider;
     public TextMeshProUGUI speedIndicator;
 
     float speed;
-
-
 
     void Start()
     {
@@ -48,35 +50,59 @@ public class Aircraft : MonoBehaviour
 
     void Update()
     {
+        rollInput = Input.GetAxis("Roll");
+        yawInput = Input.GetAxis("Yaw");
+        pitchInput =  Input.GetAxis("Pitch");
+        throttleInput = Input.GetAxis("Throttle");
+    }
+
+    void FixedUpdate()
+    {
         speed = Mathf.RoundToInt(rigidbody.velocity.x + rigidbody.velocity.y + rigidbody.velocity.z * 10);
         speedIndicator.text = speed.ToString();
+        
+        rotationMultiplyer = GetRotation();
 
-        rotationMultiplyer = 
 
         //Roll
-        rollAxis = Mathf.Clamp(rollMultiplyer * Input.GetAxis("Roll"), minRoll, maxRoll) * Time.deltaTime;
         rigidbody.AddTorque(transform.forward * rollAxis);
+        rollAxis = Mathf.Clamp(rollMultiplyer * rollInput, minRoll, maxRoll);
         
         //Yaw
-        yawAxis = Mathf.Clamp(yawMultiplyer * Input.GetAxis("Yaw"), minYaw, maxYaw) * Time.deltaTime;
+        yawAxis = Mathf.Clamp(yawMultiplyer * yawInput, minYaw, maxYaw);
         rigidbody.AddTorque(transform.up *  yawAxis);
 
         //Pitch
-        pitchAxis = Mathf.Clamp(pitchMultiplyer * Input.GetAxis("Pitch"), minPitch, maxPitch) * Time.deltaTime;
+        pitchAxis = Mathf.Clamp(pitchMultiplyer * pitchInput, minPitch, maxPitch) ;
         rigidbody.AddTorque(transform.right * pitchAxis);
 
         //Thrust
-        thrust = Mathf.Clamp(thrust + Input.GetAxis("Thrust"), 0f, 100f);
-        throttle.value = thrust;
-        rigidbody.AddForce(transform.forward * thrust * thrustMultiplyer * Time.deltaTime);
+        throttle = Mathf.Clamp(throttle + throttleInput, 0f, 100f);
+        throttleSlider.value = throttle;
+        rigidbody.AddForce(transform.forward * throttle * thrustMultiplyer);
 
         //Gravity
-        rigidbody.AddForce(Vector3.down * gravity);
+        rigidbody.AddForce(Vector3.down * gravity * mass);
 
         //Lift
-
         lift = Mathf.Clamp(liftMultiplyer * speed / rotationMultiplyer, 0, maxLift);
         rigidbody.AddForce(transform.up * lift);
+
+        //Drag
+    }
+
+    private float GetRotation()
+    {
+        Vector3 currentRotation = transform.rotation.eulerAngles;
+        //Round pitch rotation down to max 1, min -1
+        float pitchRotation = currentRotation.x / 180;
+        float rollRotation = currentRotation.z / 180;
+
+        pitchRotation =  Mathf.Clamp(Mathf.Abs(pitchRotation), 0.1f, 1);
+            
+
+        float rotation = ;
+        return rotation;
     }
 }
  
