@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -667,9 +667,8 @@ MonoBehaviour:
   pitchMultiplyer: 98.5
   maxPitch: 1000
   minPitch: -100
-  mass: 0
-  liftMultiplyer: 0
-  maxLift: 0
+  mass: 1
+  liftMultiplyer: 1
   throttleSlider: {fileID: 152514032}
   speedIndicator: {fileID: 547516911}
 --- !u!4 &843534912

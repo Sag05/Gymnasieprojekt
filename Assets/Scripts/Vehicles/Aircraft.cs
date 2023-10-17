@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,8 +34,6 @@ public class Aircraft : MonoBehaviour
     
     float lift;
     public float liftMultiplyer;
-    public float maxLift;
-    float rotationMultiplyer;
 
     float throttleInput;
     public Slider throttleSlider;
@@ -58,10 +56,9 @@ public class Aircraft : MonoBehaviour
 
     void FixedUpdate()
     {
-        speed = Mathf.RoundToInt(rigidbody.velocity.x + rigidbody.velocity.y + rigidbody.velocity.z * 10);
-        speedIndicator.text = speed.ToString();
+        speed = rigidbody.velocity.magnitude * 10;
         
-        rotationMultiplyer = GetRotation();
+        speedIndicator.text = Mathf.Round(speed).ToString();
 
 
         //Roll
@@ -85,24 +82,13 @@ public class Aircraft : MonoBehaviour
         rigidbody.AddForce(Vector3.down * gravity * mass);
 
         //Lift
-        lift = Mathf.Clamp(liftMultiplyer * speed / rotationMultiplyer, 0, maxLift);
+        //cl = (2*m*g)/(p*v^2) 
+        float liftCoefficient = (2 * mass * gravity) / (1 * 0);
+
+        
         rigidbody.AddForce(transform.up * lift);
 
         //Drag
-    }
-
-    private float GetRotation()
-    {
-        Vector3 currentRotation = transform.rotation.eulerAngles;
-        //Round pitch rotation down to max 1, min -1
-        float pitchRotation = currentRotation.x / 180;
-        float rollRotation = currentRotation.z / 180;
-
-        pitchRotation =  Mathf.Clamp(Mathf.Abs(pitchRotation), 0.1f, 1);
-            
-
-        float rotation = ;
-        return rotation;
     }
 }
  
