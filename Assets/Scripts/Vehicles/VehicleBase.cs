@@ -29,18 +29,6 @@ namespace Assets.Scripts.Vehicles
 
         private float dragCoefficient;
 
-        /* Less accurate drag coefficient solver
-        /// <summary>
-        /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed
-        /// </summary>
-        /// <param name="thrust">The thrust provided by engine</param>
-        /// <param name="topSpeed">The absolute top speed of the vehicle</param>
-        public void SolveDragCoefficient(float thrust, float topSpeed)
-        {
-            this.dragCoefficient = 2 * (thrust / (topSpeed * topSpeed));
-        }
-        */
-
         /// <summary>
         /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the air density and frontal area
         /// </summary>
@@ -58,13 +46,26 @@ namespace Assets.Scripts.Vehicles
         /// </summary>
         /// <param name="frontalArea"></param>
         /// <param name="airDensity"></param>
-        /// <param name="speed"></param>
-        public float CalculateDragForce(float airDensity, float frontalArea, float speed)
+        /// <param name="velocity"></param>
+        public float CalculateDragForce(float airDensity, float frontalArea, float velocity)
         {
-            return 0.5f * dragCoefficient * airDensity * frontalArea * Mathf.Pow(speed, 2);
+            return 0.5f * dragCoefficient * airDensity * frontalArea * Mathf.Pow(velocity, 2);
         }
 
+        
 
+        /// <summary>
+        /// Calculates the lift force
+        /// </summary>
+        /// <param name="liftCoefficient"></param>
+        /// <param name="airPreasure"></param>
+        /// <param name="wingArea"></param>
+        /// <param name="velocity"></param>
+        /// <returns></returns>
+        public float CalculateLift(float liftCoefficient, float airPreasure, float wingArea, float velocity)
+        {
+            return 0.5f * liftCoefficient * airPreasure * wingArea * Mathf.Pow(velocity, 2);
+        }
 
 
 
