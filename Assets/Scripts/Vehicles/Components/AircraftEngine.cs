@@ -27,7 +27,7 @@ namespace Assets.Scripts.Vehicles.Components
         public float TurbineThrustFactor { get => this.TurbineRPM / this.TurbineMaxRPM;}
         
         /// <summary>
-        /// Target RPM fac
+        /// Target RPM factor, measured in 0-1
         /// </summary>
         public float TargetRPMFactor
         { 
@@ -59,8 +59,10 @@ namespace Assets.Scripts.Vehicles.Components
             this.TurbineRPM +=
                 (this.TurbineAcceleration * this.currentTargetRPMFactor * (this.EngineEnabled ? 1 : 0));
 
-            // if (this.TurbineRPM == float.PositiveInfinity) this.TurbineRPM = 0
-            ///UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor);
+            //UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor);
+            
+
+
             return true;
         }
     }
