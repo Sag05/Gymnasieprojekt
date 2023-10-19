@@ -27,7 +27,30 @@ namespace Assets.Scripts.Vehicles
         /// </summary>
         public Rigidbody VehicleBody { get; set; }
 
+        public float VelocityMagnitude { get; set; }
+
+        /// <summary>
+        /// World Velocity of the vehicle
+        /// </summary>
+        public Vector3 Velocity { get; set; }
+
+        /// <summary>
+        /// Local velocity of the vehicle
+        /// </summary>
+        public float LocalVelocity { get; set; }
+
         private float dragCoefficient;
+
+
+        void CalculateState()
+        {
+            this.VelocityMagnitude = this.VehicleBody.velocity.magnitude * scaleFactor;
+            Quaternion invRotation = Quaternion.Inverse(this.VehicleBody.rotation);
+            this.Velocity = this.VehicleBody.velocity;
+            this.LocalVelocity = this.Velocity * invRotation;
+        }
+
+
 
         /// <summary>
         /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the air density and frontal area
@@ -67,6 +90,7 @@ namespace Assets.Scripts.Vehicles
             return 0.5f * liftCoefficient * airPreasure * wingArea * Mathf.Pow(velocity, 2);
         }
 
+        
 
 
         public void Start()

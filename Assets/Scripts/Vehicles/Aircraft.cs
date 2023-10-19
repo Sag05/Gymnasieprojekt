@@ -9,21 +9,20 @@ using UnityEngine.UI;
 
 public class Aircraft : VehicleBase
 {
-    float throttle;
+    float throttleFactor;
 
     float rollInput;
     float yawInput;
     float pitchInput;
-
     float throttleInput;
+    
     public Slider throttleSlider;
     public TextMeshProUGUI speedIndicator;
 
-    float speed;
+    public AnimationCurve testCurve;
 
     new void Start()
     {
-
         this.VehicleComponents = new ComponentBase[]
         {
             new AircraftEngine(this)
@@ -31,6 +30,11 @@ public class Aircraft : VehicleBase
                 HitPoints = 100f,
                 TurbineMaxRPM = 20000,
                 TurbineAcceleration = 600
+            },
+            new HelmetMountedDisplay(this)
+            {
+                throttleSlider = this.throttleSlider,
+                speedIndicator = this.speedIndicator
             }
         };
         this.VehicleConfiguration = new AircraftConfiguration()
@@ -50,26 +54,35 @@ public class Aircraft : VehicleBase
         this.yawInput = Input.GetAxis("Yaw");
         this.pitchInput =  Input.GetAxis("Pitch");
         this.throttleInput = Input.GetAxis("Throttle");
+
+
+        foreach (ComponentBase component in this.VehicleComponents)
+        {
+            if (component is HelmetMountedDisplay)
+            {
+                HelmetMountedDisplay hmd = (HelmetMountedDisplay)component;
+                hmd.tick();
+            }
+        }
     }
 
     void FixedUpdate()
     {
         //Set throttle
-        this.throttle = Mathf.Clamp(this.throttle + this.throttleInput, 0f, 100f);
-        this.throttleSlider.value = this.throttle;
+        this.throttleFactor = Mathf.Clamp(this.throttleFactor + this.throttleInput, 0f, 100f);
+        this.throttleSlider.value = this.throttleFactor;
 
         //Set speed indicator
         this.speed = this.VehicleBody.velocity.magnitude * 10;
-        this.speedIndicator.text = Mathf.Round(this.speed).ToString();
 
         foreach (ComponentBase component in this.VehicleComponents)
         {
             if(component is AircraftEngine)
             {
                 AircraftEngine engine = (AircraftEngine)component;
-                engine.TargetRPMFactor = throttle / 100f;
+                engine.TargetRPMFactor = throttleFactor / 100f;
                 engine.Tick();
-            }
+            } 
         }
 
         // speed = VehicleBody.velocity.magnitude * 10;

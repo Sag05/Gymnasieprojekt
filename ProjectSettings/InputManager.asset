@@ -55,8 +55,8 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Throttle
-    descriptiveName: 
-    descriptiveNegativeName: 
+    descriptiveName: Increase throttle
+    descriptiveNegativeName: Decrease throttle
     negativeButton: left ctrl
     positiveButton: left shift
     altNegativeButton: page down

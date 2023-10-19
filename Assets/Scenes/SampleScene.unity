@@ -657,20 +657,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80b910fd77bca434da213e35402364ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thrustMultiplyer: 30
-  rollMultiplyer: 15
-  maxRoll: 100
-  minRoll: -100
-  yawMultiplyer: 5
-  maxYaw: 100
-  minYaw: -100
-  pitchMultiplyer: 98.5
-  maxPitch: 1000
-  minPitch: -100
-  mass: 1
-  liftMultiplyer: 1
   throttleSlider: {fileID: 152514032}
   speedIndicator: {fileID: 547516911}
+  testCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &843534912
 Transform:
   m_ObjectHideFlags: 0
