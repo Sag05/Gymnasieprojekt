@@ -12,59 +12,24 @@ namespace Assets.Scripts.Vehicles
 {
     public abstract class VehicleBase : MonoBehaviour
     {
-<<<<<<< HEAD
         #region Variables
         public float Throttle{ get; set; }
-=======
-        public float Throttle{ get; set; }
-
-        public VehicleConfigurationBase VehicleConfiguration { get; set; }
->>>>>>> main
 
         //public VehicleConfigurationBase VehicleConfiguration { get; set; }
         public IList<ComponentBase> VehicleComponents { get; set; }
 
-<<<<<<< HEAD
         //public float Mass { get => VehicleConfiguration.Mass; }
         public Rigidbody VehicleBody { get; set; }
 
         //Velocity
-=======
-        /// <summary>
-        /// Mass of the vehicle
-        /// </summary>
-        public float Mass { get; set; }
-        public float MaxThrust { get; private set; }
-
-        /// <summary>
-        /// Rigidbody of the vehicle
-        /// </summary>
-        public Rigidbody VehicleBody { get; set; }
-
-        /// <summary>
-        /// Velocity magnitude of the vehicle
-        /// </summary>
-        public float VelocityMagnitude { get; set; }
-
-        /// <summary>
-        /// World Velocity of the vehicle
-        /// </summary>
->>>>>>> main
         public Vector3 Velocity { get; set; }
         public Vector3 LocalVelocity { get; set; }
         public Vector3 LocalAngularVelocity { get; private set; }
         private Vector3 lastVelocity;
 
-<<<<<<< HEAD
         //Altitude
         public float Altitude { get; private set; }
         public float RadarAltitude { get; private set; }
-=======
-        /// <summary>
-        /// Local velocity of the vehicle
-        /// </summary>
-        public Vector3 LocalVelocity { get; set; }
->>>>>>> main
 
         //Angle of attack
         public float AngleOfAttack { get; set; }
@@ -74,7 +39,6 @@ namespace Assets.Scripts.Vehicles
         private float dragCoefficient;
 
 
-<<<<<<< HEAD
         private float currentAirPreassure { get => 101325f * MathF.Exp(-GameManager.gravity * 0.0289644f * this.Altitude / (8.31447f * 288.15f)); }
         private float currentAirDensity { get => this.currentAirPreassure / (287.058f * (273.15f + 15f)); }
         #endregion
@@ -110,23 +74,6 @@ namespace Assets.Scripts.Vehicles
             lastVelocity = Velocity;
         }
 
-=======
-        public void CalculateState()
-        {
-            UpdateVelocityMagnitude();
-            Quaternion invRotation = Quaternion.Inverse(this.VehicleBody.rotation);
-            this.Velocity = this.VehicleBody.velocity;
-            this.LocalVelocity = invRotation * this.Velocity;
-        }
-
-        /// <summary>
-        /// Updates the vehicle velocity magnitude
-        /// </summary>
-        public void UpdateVelocityMagnitude()
-        {
-            this.VelocityMagnitude = this.VehicleBody.velocity.magnitude;
-        }
->>>>>>> main
 
         /// <summary>
         /// Calculates the drag force
@@ -176,12 +123,6 @@ namespace Assets.Scripts.Vehicles
 
         public void Start()
         {
-<<<<<<< HEAD
-=======
-            //Apply VehicleConfiguration
-            this.Mass = this.VehicleConfiguration.Mass;
-
->>>>>>> main
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
                 this.VehicleBody = this.gameObject.GetComponent<Rigidbody>();

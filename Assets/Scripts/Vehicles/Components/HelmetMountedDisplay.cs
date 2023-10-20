@@ -44,7 +44,6 @@ namespace Assets.Scripts.Vehicles.Components
 
         public bool Tick()
         {
-<<<<<<< HEAD
             //Set speed text
             this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
             this.gForceText.text = GForce.ToString("0.0");
@@ -62,11 +61,6 @@ namespace Assets.Scripts.Vehicles.Components
             }
 
             this.throttleSlider.value = this.Throttle;
-=======
-            this.ParentVehicle.UpdateVelocityMagnitude();
-            this.speedIndicator.text = (this.ParentVehicle.VelocityMagnitude * GameManager.scaleFactor).ToString("0");
-            this.throttleSlider.value = this.ParentVehicle.Throttle;
->>>>>>> main
             return true;
         }
     }
