@@ -18,9 +18,9 @@ namespace Assets.Scripts.Vehicles.Components
 
         public bool tick()
         {
-            this.speedIndicator.text = this.ParentVehicle.VelocityMagnitude.ToString("0");
-            this.throttleSlider.value = this.ParentVehicle
-
+            this.ParentVehicle.UpdateVelocityMagnitude();
+            this.speedIndicator.text = (this.ParentVehicle.VelocityMagnitude * GameManager.scaleFactor).ToString("0");
+            this.throttleSlider.value = this.ParentVehicle.Throttle;
             return true;
         }
     }

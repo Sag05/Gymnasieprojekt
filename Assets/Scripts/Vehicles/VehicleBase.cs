@@ -10,6 +10,8 @@ namespace Assets.Scripts.Vehicles
 {
     public abstract class VehicleBase : MonoBehaviour
     {
+        public float Throttle{ get; set; }
+
         public VehicleConfigurationBase VehicleConfiguration { get; set; }
 
         /// <summary>
@@ -21,12 +23,16 @@ namespace Assets.Scripts.Vehicles
         /// Mass of the vehicle
         /// </summary>
         public float Mass { get; set; }
+        public float MaxThrust { get; private set; }
 
         /// <summary>
         /// Rigidbody of the vehicle
         /// </summary>
         public Rigidbody VehicleBody { get; set; }
 
+        /// <summary>
+        /// Velocity magnitude of the vehicle
+        /// </summary>
         public float VelocityMagnitude { get; set; }
 
         /// <summary>
@@ -37,20 +43,26 @@ namespace Assets.Scripts.Vehicles
         /// <summary>
         /// Local velocity of the vehicle
         /// </summary>
-        public float LocalVelocity { get; set; }
+        public Vector3 LocalVelocity { get; set; }
 
         private float dragCoefficient;
 
 
-        void CalculateState()
+        public void CalculateState()
         {
-            this.VelocityMagnitude = this.VehicleBody.velocity.magnitude * scaleFactor;
+            UpdateVelocityMagnitude();
             Quaternion invRotation = Quaternion.Inverse(this.VehicleBody.rotation);
             this.Velocity = this.VehicleBody.velocity;
-            this.LocalVelocity = this.Velocity * invRotation;
+            this.LocalVelocity = invRotation * this.Velocity;
         }
 
-
+        /// <summary>
+        /// Updates the vehicle velocity magnitude
+        /// </summary>
+        public void UpdateVelocityMagnitude()
+        {
+            this.VelocityMagnitude = this.VehicleBody.velocity.magnitude;
+        }
 
         /// <summary>
         /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the air density and frontal area
@@ -97,7 +109,6 @@ namespace Assets.Scripts.Vehicles
         {
             //Apply VehicleConfiguration
             this.Mass = this.VehicleConfiguration.Mass;
-
 
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
