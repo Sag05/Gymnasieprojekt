@@ -11,8 +11,13 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
+<<<<<<< HEAD
         public IList<ComponentBase> VehicleComponents;
         public float Mass;
+=======
+        public float Mass { get; set; }
+        public float MaxThrust { get; internal set; }
+>>>>>>> main
     }
 
     [Serializable]
