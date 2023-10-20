@@ -1,22 +1,24 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Scripts.Vehicles.Components;
 
 namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
-        public float Mass { get; set; }
-        public float MaxThrust { get; internal set; }
+        public IList<ComponentBase> VehicleComponents;
+        public float Mass;
     }
 
+    [Serializable]
     public class AircraftConfiguration : VehicleConfigurationBase
     {
-
-        public float OptimalLiftSpeedAtZeroAoA { get; set; }
-        public AnimationCurve liftCurve { get; set;}
+        public float FrontalArea;
+        public AnimationCurve liftCurve;
     }
 }

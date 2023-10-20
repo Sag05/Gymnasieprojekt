@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Vehicles.Components
 {
@@ -31,7 +32,7 @@ namespace Assets.Scripts.Vehicles.Components
         /// <summary>
         /// The maximum thrust of the engine, measured in Newtons
         /// </summary>
-        public float MaxThrust { get => maxThrust; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxThrust", value, "MaxThrust can not be less than or equal to 0"); this.maxThrust = value; } }
+        public float MaxThrust { get => maxThrust; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxThrust", value, "MaxThrust can not be less than or equal to 0"); this.maxThrust = value * GameManager.scaleFactor; } }
         private float maxThrust;
         /// <summary>
         /// The current turbine RPM, measured in RPM
@@ -74,9 +75,11 @@ namespace Assets.Scripts.Vehicles.Components
                 // Turbine power (acceleration)
             this.TurbineRPM +=
                 (this.TurbineAcceleration * this.currentTargetRPMFactor * (this.EngineEnabled ? 1 : 0));
-            //UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor);
+            //UnityEngine.Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor + "\n" + "T-AX" + this.currentTargetRPMFactor);
+
+            //thrust is the thrustfactor times the maximum thrust
+            //UnityEngine.Debug.Log(MaxThrust);
             this.Thrust = this.TurbineThrustFactor * this.maxThrust;
-            
             return true;
         }
     }

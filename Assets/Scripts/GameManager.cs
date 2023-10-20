@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public const float gravity = 9.82f;
-    public const float scaleFactor = 10;
+    public const float scaleFactor = 0.1f;
 
     // Start is called before the first frame update
     void Start()

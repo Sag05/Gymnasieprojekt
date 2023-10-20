@@ -1,3 +1,4 @@
+using Assets.Scripts;
 using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using System;
@@ -14,37 +15,25 @@ public class Aircraft : VehicleBase
     float pitchInput;
     float throttleInput;
     
-    public Slider throttleSlider;
-    public TextMeshProUGUI speedIndicator;
+    AircraftConfiguration AircraftConfiguration;
 
-    public AnimationCurve testCurve;
+    string vehicleName = "F5";   
 
     new void Start()
     {
-        this.VehicleComponents = new ComponentBase[]
+        this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\" + vehicleName + ".cfg", this);
+
+        foreach (ComponentBase component in this.VehicleComponents)
         {
-            new AircraftEngine(this)
+            if (component is AircraftEngine)
             {
-                HitPoints = 100f,
-                TurbineMaxRPM = 20000,
-                TurbineAcceleration = 600,
-                MaxThrust = 10000
-            },
-            new HelmetMountedDisplay(this)
-            {
-                throttleSlider = this.throttleSlider,
-                speedIndicator = this.speedIndicator
+                AircraftEngine engine = (AircraftEngine)component;
+                engine.EngineEnabled = true;
             }
-        };
-        this.VehicleConfiguration = new AircraftConfiguration()
-        {
-            OptimalLiftSpeedAtZeroAoA = 20
-        };
+        }
 
         base.Start();
-
-        this.Mass = this.VehicleBody.mass;
-        //Debug.Log("Mass rigidbody mass: " + this.VehicleBody.mass);
+        this.VehicleBody.mass = this.AircraftConfiguration.Mass;
     }
 
     void Update()
@@ -53,22 +42,15 @@ public class Aircraft : VehicleBase
         this.yawInput = Input.GetAxis("Yaw");
         this.pitchInput =  Input.GetAxis("Pitch");
         this.throttleInput = Input.GetAxis("Throttle");
-
-        foreach (ComponentBase component in this.VehicleComponents)
-        {
-            if (component is HelmetMountedDisplay)
-            {
-                HelmetMountedDisplay hmd = (HelmetMountedDisplay)component;
-                hmd.tick();
-            }
-        }
     }
 
     void FixedUpdate()
     {
         //Set throttle
         this.Throttle = Mathf.Clamp(this.Throttle + this.throttleInput, 0f, 100f);
+        //base.UpdateState();
 
+        float totalThrust = 0;
         foreach (ComponentBase component in this.VehicleComponents)
         {
             if(component is AircraftEngine)
@@ -76,10 +58,28 @@ public class Aircraft : VehicleBase
                 AircraftEngine engine = (AircraftEngine)component;
                 engine.TargetRPMFactor = Throttle / 100f;
                 engine.Tick();
+                Debug.Log("Thrust: " + engine.Thrust);
                 //Apply thrust
-                this.VehicleBody.AddForce(transform.forward * engine.Thrust);
-            } 
+                totalThrust += engine.Thrust;
+            }
+            else if (component is HelmetMountedDisplay)
+            {
+                HelmetMountedDisplay hmd = (HelmetMountedDisplay)component;
+                hmd.GForce = base.LocalGForce.y;
+                hmd.Velocity = base.Velocity;
+                hmd.Altitude = base.Altitude;
+                hmd.RadarAltitude = base.RadarAltitude;
+                hmd.Throttle = this.Throttle / 100f;
+                hmd.Tick();
+            }
         }
+
+        //Apply forces
+        //Thrust
+        this.VehicleBody.AddForce(this.transform.forward * totalThrust);
+        //Drag
+        //this.VehicleBody.AddRelativeForce();
+        //Lift
     }
 }
  

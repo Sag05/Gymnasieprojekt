@@ -1,93 +1,102 @@
 ﻿using Assets.Scripts.Vehicles.Components;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.Xml.Serialization;
 
 namespace Assets.Scripts.Vehicles
 {
     public abstract class VehicleBase : MonoBehaviour
     {
+        #region Variables
         public float Throttle{ get; set; }
 
-        public VehicleConfigurationBase VehicleConfiguration { get; set; }
-
-        /// <summary>
-        /// List of all components of the vehicle
-        /// </summary>
+        //public VehicleConfigurationBase VehicleConfiguration { get; set; }
         public IList<ComponentBase> VehicleComponents { get; set; }
 
-        /// <summary>
-        /// Mass of the vehicle
-        /// </summary>
-        public float Mass { get; set; }
-        public float MaxThrust { get; private set; }
-
-        /// <summary>
-        /// Rigidbody of the vehicle
-        /// </summary>
+        //public float Mass { get => VehicleConfiguration.Mass; }
         public Rigidbody VehicleBody { get; set; }
 
-        /// <summary>
-        /// Velocity magnitude of the vehicle
-        /// </summary>
-        public float VelocityMagnitude { get; set; }
-
-        /// <summary>
-        /// World Velocity of the vehicle
-        /// </summary>
+        //Velocity
         public Vector3 Velocity { get; set; }
-
-        /// <summary>
-        /// Local velocity of the vehicle
-        /// </summary>
         public Vector3 LocalVelocity { get; set; }
+        public Vector3 LocalAngularVelocity { get; private set; }
+        private Vector3 lastVelocity;
 
+        //Altitude
+        public float Altitude { get; private set; }
+        public float RadarAltitude { get; private set; }
+
+        //Angle of attack
+        public float AngleOfAttack { get; set; }
+        public float AngleOfAttackYaw { get; set; }
+
+        public Vector3 LocalGForce { get; set; }
         private float dragCoefficient;
 
 
-        public void CalculateState()
-        {
-            UpdateVelocityMagnitude();
-            Quaternion invRotation = Quaternion.Inverse(this.VehicleBody.rotation);
-            this.Velocity = this.VehicleBody.velocity;
-            this.LocalVelocity = invRotation * this.Velocity;
-        }
+        private float currentAirPreassure { get => 101325f * MathF.Exp(-GameManager.gravity * 0.0289644f * this.Altitude / (8.31447f * 288.15f)); }
+        private float currentAirDensity { get => this.currentAirPreassure / (287.058f * (273.15f + 15f)); }
+        #endregion
 
+        /*
         /// <summary>
-        /// Updates the vehicle velocity magnitude
+        /// Calculates current state of the vehicle, updating Altitude, RadarAltitude, Velocity, LocalVelocity, LocalAngularVelocity, AngleOfAttack, AngleOfAttackYaw, LocalGForce
         /// </summary>
-        public void UpdateVelocityMagnitude()
+        public void UpdateState()
         {
-            this.VelocityMagnitude = this.VehicleBody.velocity.magnitude;
+            //Calculate inverse rotation used in some calculations
+            Quaternion inverseRotation = Quaternion.Inverse(this.VehicleBody.rotation);
+
+            //Calculate altitude
+            Altitude = gameObject.transform.position.y;
+            RaycastHit hit;
+            LayerMask layerMask = LayerMask.GetMask("Terrain");
+            Physics.Raycast(transform.position, Vector3.down, out hit, 2000);
+            RadarAltitude = hit.distance;
+
+            //Calculate Velocity            
+            this.Velocity = this.VehicleBody.velocity;
+            this.LocalVelocity = inverseRotation * this.Velocity;
+            this.LocalAngularVelocity = inverseRotation * this.VehicleBody.angularVelocity;
+
+            //Calculate AoA
+            AngleOfAttack = Mathf.Atan2(-LocalVelocity.y, LocalVelocity.z);
+            AngleOfAttackYaw = Mathf.Atan2(LocalVelocity.x, LocalVelocity.z);
+        
+            //Calculate GForce
+            Vector3 acceleration = (Velocity - lastVelocity) / Time.fixedDeltaTime;
+            LocalGForce = inverseRotation * acceleration;
+            lastVelocity = Velocity;
         }
 
+
         /// <summary>
-        /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the air density and frontal area
+        /// Calculates the drag force
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 CalculateDragForce()
+        {
+            dragCoefficient = 0.1f;
+            return 0.5f * dragCoefficient * currentAirDensity * AircraftConfiguration.FrontalArea * LocalVelocity.sqrMagnitude * -LocalVelocity.normalized;
+        }
+
+
+        /// <summary>
+        /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the <paramref name="airDensity"/> and <paramref name="frontalArea"/>
         /// </summary>
         /// <param name="thrust"></param>
         /// <param name="topSpeed"></param>
         /// <param name="airDensity"></param>
         /// <param name="frontalArea"></param>
-        public void SolveDragCoefficient(float thrust, float topSpeed, float airDensity, float frontalArea)
-        {
-            this.dragCoefficient = 2 * (thrust / (airDensity * frontalArea * Mathf.Pow(topSpeed, 2)));
-        }
-
-        /// <summary>
-        /// Calculates the drag force 
-        /// </summary>
-        /// <param name="frontalArea"></param>
-        /// <param name="airDensity"></param>
-        /// <param name="velocity"></param>
-        public float CalculateDragForce(float airDensity, float frontalArea, float velocity)
-        {
-            return 0.5f * dragCoefficient * airDensity * frontalArea * Mathf.Pow(velocity, 2);
-        }
-
-        
+        //public void SolveDragCoefficient(float thrust, float topSpeed, float airDensity, float frontalArea)
+        //{
+        //    this.dragCoefficient = 2 * (thrust / (airDensity * frontalArea * Mathf.Pow(topSpeed, 2)));
+        //}
 
         /// <summary>
         /// Calculates the lift force
@@ -102,14 +111,18 @@ namespace Assets.Scripts.Vehicles
             return 0.5f * liftCoefficient * airPreasure * wingArea * Mathf.Pow(velocity, 2);
         }
 
-        
-
+        public void SaveConfigFile(string path)
+        {
+            File.WriteAllText(path, AircraftConfiguration.SaveToJSON(this.AircraftConfiguration));
+        }
+        public void ReadConfigFile(string path)
+        {
+            this.AircraftConfiguration = AircraftConfiguration.CreateFromJSON(File.ReadAllText(path));
+        }
+        `*/
 
         public void Start()
         {
-            //Apply VehicleConfiguration
-            this.Mass = this.VehicleConfiguration.Mass;
-
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
                 this.VehicleBody = this.gameObject.GetComponent<Rigidbody>();
@@ -118,9 +131,6 @@ namespace Assets.Scripts.Vehicles
             {
                 this.VehicleBody = this.gameObject.AddComponent<Rigidbody>();
             }
-
-            //Apply mass to rigidbody
-            this.VehicleBody.mass = this.Mass;
         }
     }
 }
