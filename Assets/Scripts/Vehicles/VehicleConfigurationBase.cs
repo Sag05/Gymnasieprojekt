@@ -9,7 +9,8 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
-        public float Mass { get; set; } 
+        public float Mass { get; set; }
+        public float MaxThrust { get; internal set; }
     }
 
     public class AircraftConfiguration : VehicleConfigurationBase

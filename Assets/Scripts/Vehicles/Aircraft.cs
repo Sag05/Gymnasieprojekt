@@ -9,8 +9,6 @@ using UnityEngine.UI;
 
 public class Aircraft : VehicleBase
 {
-    float throttleFactor;
-
     float rollInput;
     float yawInput;
     float pitchInput;
@@ -29,7 +27,8 @@ public class Aircraft : VehicleBase
             {
                 HitPoints = 100f,
                 TurbineMaxRPM = 20000,
-                TurbineAcceleration = 600
+                TurbineAcceleration = 600,
+                MaxThrust = 10000
             },
             new HelmetMountedDisplay(this)
             {
@@ -55,7 +54,6 @@ public class Aircraft : VehicleBase
         this.pitchInput =  Input.GetAxis("Pitch");
         this.throttleInput = Input.GetAxis("Throttle");
 
-
         foreach (ComponentBase component in this.VehicleComponents)
         {
             if (component is HelmetMountedDisplay)
@@ -69,55 +67,19 @@ public class Aircraft : VehicleBase
     void FixedUpdate()
     {
         //Set throttle
-        this.throttleFactor = Mathf.Clamp(this.throttleFactor + this.throttleInput, 0f, 100f);
-        this.throttleSlider.value = this.throttleFactor;
-
-        //Set speed indicator
-        this.speed = this.VehicleBody.velocity.magnitude * 10;
+        this.Throttle = Mathf.Clamp(this.Throttle + this.throttleInput, 0f, 100f);
 
         foreach (ComponentBase component in this.VehicleComponents)
         {
             if(component is AircraftEngine)
             {
                 AircraftEngine engine = (AircraftEngine)component;
-                engine.TargetRPMFactor = throttleFactor / 100f;
+                engine.TargetRPMFactor = Throttle / 100f;
                 engine.Tick();
+                //Apply thrust
+                this.VehicleBody.AddForce(transform.forward * engine.Thrust);
             } 
         }
-
-        // speed = VehicleBody.velocity.magnitude * 10;
-        // 
-        // speedIndicator.text = Mathf.Round(speed).ToString();
-        // 
-        // 
-        // //Roll
-        // VehicleBody.AddTorque(transform.forward * rollAxis);
-        // rollAxis = Mathf.Clamp(rollMultiplier * rollInput, minRoll, maxRoll);
-        // 
-        // //Yaw
-        // yawAxis = Mathf.Clamp(yawMultiplier * yawInput, minYaw, maxYaw);
-        // VehicleBody.AddTorque(transform.up *  yawAxis);
-        // 
-        // //Pitch
-        // pitchAxis = Mathf.Clamp(pitchMultiplier * pitchInput, minPitch, maxPitch) ;
-        // VehicleBody.AddTorque(transform.right * pitchAxis);
-        // 
-        //Thrust
-
-        
-        // VehicleBody.AddForce(transform.forward * throttle * thrustMultiplier);
-        // 
-        // //Gravity
-        // VehicleBody.AddForce(Vector3.down * gravity * mass);
-        // 
-        // //Lift
-        // //cl = (2*m*g)/(p*v^2) 
-        // float liftCoefficient = (2 * mass * gravity) / (1 * 0);
-        // 
-        // 
-        // VehicleBody.AddForce(transform.up * lift);
-        // 
-        // //Drag
     }
 }
  
