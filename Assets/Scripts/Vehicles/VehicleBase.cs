@@ -12,6 +12,10 @@ namespace Assets.Scripts.Vehicles
 {
     public abstract class VehicleBase : MonoBehaviour
     {
+        public VehicleBase() : base()
+        {
+            this.VehicleComponents = new List<ComponentBase>();
+        }
         #region Variables
         public float Throttle{ get; set; }
 

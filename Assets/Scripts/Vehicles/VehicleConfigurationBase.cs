@@ -11,7 +11,7 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
-        public IList<ComponentBase> VehicleComponents;
+        public IList<ComponentBase> VehicleComponents = new List<ComponentBase>();
         public float Mass;
     }
 
