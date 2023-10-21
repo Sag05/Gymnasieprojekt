@@ -10,12 +10,12 @@ using UnityEngine.UI;
 
 public class Aircraft : VehicleBase
 {
-    float rollInput;
-    float yawInput;
-    float pitchInput;
-    float throttleInput;
+    private float rollInput;
+    private float yawInput;
+    private float pitchInput;
+    private float throttleInput;
     
-    AircraftConfiguration AircraftConfiguration;
+    private AircraftConfiguration AircraftConfiguration;
 
     string vehicleName = "F5";   
 
@@ -53,11 +53,17 @@ public class Aircraft : VehicleBase
         float totalThrust = 0;
         foreach (ComponentBase component in this.VehicleComponents)
         {
+            // Ticks any tickable components in the pre-phase
+            if(component is ITickableComponent)
+            {
+                ((ITickableComponent)component).PreTickComponent();
+            }
+
+            // Componenents should have their values get/set in this area
             if(component is AircraftEngine)
             {
                 AircraftEngine engine = (AircraftEngine)component;
                 engine.TargetRPMFactor = Throttle / 100f;
-                engine.Tick();
                 Debug.Log("Thrust: " + engine.Thrust);
                 //Apply thrust
                 totalThrust += engine.Thrust;
@@ -70,7 +76,12 @@ public class Aircraft : VehicleBase
                 hmd.Altitude = base.Altitude;
                 hmd.RadarAltitude = base.RadarAltitude;
                 hmd.Throttle = this.Throttle / 100f;
-                hmd.Tick();
+            }
+
+            // Ticks any tickable components in the post-phase
+            if (component is ITickableComponent)
+            {
+                ((ITickableComponent)component).PostTickComponent();
             }
         }
 

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Vehicles.Components
 {
-    public class AircraftEngine : ComponentBase
+    public class AircraftEngine : ComponentBase, ITickableComponent
     {
         public AircraftEngine(VehicleBase vehicle) : base(vehicle) { }
 
@@ -82,5 +82,8 @@ namespace Assets.Scripts.Vehicles.Components
             this.Thrust = this.TurbineThrustFactor * this.maxThrust;
             return true;
         }
+
+        public bool PreTickComponent() => true;
+        public bool PostTickComponent() => this.Tick();
     }
 }

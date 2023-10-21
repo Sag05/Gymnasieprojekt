@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Vehicles.Components
 {
-    internal class HelmetMountedDisplay : ComponentBase
+    internal class HelmetMountedDisplay : ComponentBase, ITickableComponent
     {
         public HelmetMountedDisplay(VehicleBase vehicle) : base(vehicle) 
         {
@@ -63,5 +63,7 @@ namespace Assets.Scripts.Vehicles.Components
             this.throttleSlider.value = this.Throttle;
             return true;
         }
+        public bool PreTickComponent() => true;
+        public bool PostTickComponent() => this.Tick();
     }
 }

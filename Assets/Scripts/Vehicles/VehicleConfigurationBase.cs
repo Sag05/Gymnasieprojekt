@@ -11,13 +11,23 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
-        public IList<ComponentBase> VehicleComponents = new List<ComponentBase>();
-        public float Mass;
+        /// <summary>
+        /// List of components attached to the vehicle
+        /// </summary>
+        public IList<ComponentBase> VehicleComponents { get; set; } = new List<ComponentBase>();
+
+        /// <summary>
+        /// Mass of the vehicle
+        /// </summary>
+        public float Mass { get; set; }
     }
 
     [Serializable]
     public class AircraftConfiguration : VehicleConfigurationBase
     {
+        /// <summary>
+        /// The frontal area of the aircraft
+        /// </summary>
         public float FrontalArea;
         public AnimationCurve liftCurve;
     }
