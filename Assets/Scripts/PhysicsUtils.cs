@@ -4,50 +4,21 @@ using UnityEngine;
 
 public class PhysicsUtils : MonoBehaviour
 {
-
-    /// <summary>
-    /// Calculates current state of the vehicle, updating Altitude, RadarAltitude, Velocity, LocalVelocity, LocalAngularVelocity, AngleOfAttack, AngleOfAttackYaw, LocalGForce
-    /// </summary>
-    public void UpdateState(Rigidbody vehicleBody, Vector3 lastVelocity)
-    {
-        //Velcoities
-        //Vector3 velocity;
-        Vector3 localVelocity;
-        Vector3 localAngularVelocity;
-        //G force
-        Vector3 localGForce;
-
-
-        //Calculate inverse rotation used in some calculations
-        Quaternion inverseRotation = Quaternion.Inverse(vehicleBody.rotation);
-
-        //Calculate altitude
-
-        //Calculate Velocity            
-        //velocity = vehicleBody.velocity;
-        localVelocity = inverseRotation * velocity;
-        localAngularVelocity = inverseRotation * vehicleBody.angularVelocity;
-
-        //Calculate AoA
-        //angleOfAttack = Mathf.Atan2(-localVelocity.y, localVelocity.z);
-        //angleOfAttackYaw = Mathf.Atan2(localVelocity.x, localVelocity.z);
-
-        //Calculate GForce
-        Vector3 acceleration = (velocity - lastVelocity) / Time.fixedDeltaTime;
-        localGForce = inverseRotation * acceleration;
-        lastVelocity = velocity;
-
-    }
-
-
-
+    //float dynamicAirViscosity = 1.7894e-5f * Mathf.Pow(1 + 120f / (airDensity + 120f) * Mathf.Pow(LocalVelocity.magnitude, 1.5f), -1);
+    //float reynoldsNumber = currentAirDensity * LocalVelocity.magnitude * frontalArea / dynamicAirViscosity;
 #region AirDensity
+    /// <summary>
+    /// //Calculates the air density at <paramref name="altitude"/>
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
     public static float CalculateAirDensity(float altitude)
     {
         return 1.225f * Mathf.Pow(1 - (0.0000225577f * altitude), 4.256f);
     }
 #endregion
 
+/*AOA calcuations, now calculated in the vehicle class
 #region AngleOfAttack
     /// <summary>
     /// Calculates the angle of attack of the vehicle
@@ -69,6 +40,7 @@ public class PhysicsUtils : MonoBehaviour
         return Mathf.Atan2(localVelocity.x, localVelocity.z);
     }
 #endregion
+*/
 
 #region Altitude
     /// <summary>
@@ -93,12 +65,16 @@ public class PhysicsUtils : MonoBehaviour
     /// <param name="frontalArea"></param>
     /// <param name="LocalVelocity"></param>
     /// <returns></returns>
-    public Vector3 CalculateDragForce(float dragCoefficient, float currentAirDensity, float frontalArea, Vector3 LocalVelocity)
+    public Vector3 CalculateDragForce(float currentAirDensity, float frontalArea, Vector3 LocalVelocity, float airDensity)
     {
+        //dragCoefficient = 2 * (thrust / (airDensity * frontalArea * Mathf.Pow(topSpeed, 2)));
         //float dragCoefficient = 0.1f;
+        float dragCoefficient = frontalArea * LocalVelocity.magnitude * 0.5f * airDensity;        
+
         return 0.5f * dragCoefficient * currentAirDensity * frontalArea * LocalVelocity.sqrMagnitude * -LocalVelocity.normalized;
     }
 
+    /* Separate function for solving drag coefficient, not needed
     /// <summary>
     /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the <paramref name="airDensity"/> and <paramref name="frontalArea"/>
     /// </summary>
@@ -110,6 +86,7 @@ public class PhysicsUtils : MonoBehaviour
     {
         return 2 * (thrust / (airDensity * frontalArea * Mathf.Pow(topSpeed, 2)));
     }
+    */
 #endregion
 
 #region Lift

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using System.Xml.Serialization;
+using Unity.VisualScripting;
 
 namespace Assets.Scripts.Vehicles
 {
@@ -22,46 +23,47 @@ namespace Assets.Scripts.Vehicles
         //public VehicleConfigurationBase VehicleConfiguration { get; set; }
         public IList<ComponentBase> VehicleComponents { get; set; }
 
-        //public float Mass { get => VehicleConfiguration.Mass; }
         public Rigidbody VehicleBody { get; set; }
 
         //Velocity
-        public Vector3 Velocity { get; set; }
-        public Vector3 LocalVelocity { get; set; }
-        public Vector3 LocalAngularVelocity { get; private set; }
-        private Vector3 lastVelocity;
+        public Vector3 Velocity { get => this.VehicleBody.velocity; }
+        public Vector3 LocalVelocity { get; private set; }
+        public Vector3 LocalAngularVelocity { get => this.InverseRotation * this.VehicleBody.angularVelocity; }
+        public Vector3 LastVelocity { get; private set; }
+        public Vector3 Acceleration { get => this.Velocity - this.LastVelocity / Time.fixedDeltaTime; }
 
         //Altitude
-        public float Altitude { get; private set; }
+        public float Altitude { get => this.gameObject.transform.position.z; }
         public float RadarAltitude { get; private set; }
 
         //Angle of attack
-        public float AngleOfAttack { get; set; }
-        public float AngleOfAttackYaw { get; set; }
+        public float AngleOfAttack { get => Mathf.Atan2(-this.LocalVelocity.y, this.LocalVelocity.z); }
+        public float AngleOfAttackYaw { get => Mathf.Atan2(this.LocalVelocity.x, this.LocalVelocity.z); }
 
-        public Vector3 LocalGForce { get; set; }
-        private float dragCoefficient;
+        public Vector3 LocalGForce { get => this.InverseRotation * this.Acceleration; }
+        
 
+        public Quaternion InverseRotation {get => Quaternion.Inverse(this.VehicleBody.rotation);}
 
         private float currentAirPreassure { get => 101325f * MathF.Exp(-GameManager.gravity * 0.0289644f * this.Altitude / (8.31447f * 288.15f)); }
         private float currentAirDensity { get => this.currentAirPreassure / (287.058f * (273.15f + 15f)); }
         #endregion
 
-        /*
-
-
-        public void SaveConfigFile(string path)
+        public void UpdateLastVelocity()
         {
-            File.WriteAllText(path, AircraftConfiguration.SaveToJSON(this.AircraftConfiguration));
+            this.LastVelocity = this.Velocity;
+        }   
+
+        public void UpdateRadarAltitude(GameObject vehicle){
+            RaycastHit hit;
+            Physics.Raycast(vehicle.transform.position, Vector3.down, out hit, 1000, LayerMask.GetMask("Terrain"));
+            this.RadarAltitude = hit.distance;
         }
-        public void ReadConfigFile(string path)
-        {
-            this.AircraftConfiguration = AircraftConfiguration.CreateFromJSON(File.ReadAllText(path));
-        }
-        `*/
 
         public void Start()
         {
+            //Set last velocity to zero since we just started and otherwise it will be null and give errors
+            this.LastVelocity = Vector3.zero;
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
                 this.VehicleBody = this.gameObject.GetComponent<Rigidbody>();

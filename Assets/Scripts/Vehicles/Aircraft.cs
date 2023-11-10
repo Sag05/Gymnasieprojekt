@@ -91,6 +91,10 @@ public class Aircraft : VehicleBase
         //Drag
         //this.VehicleBody.AddRelativeForce();
         //Lift
+
+
+        //Update last velocity for next fixed update
+        base.UpdateLastVelocity();
     }
 }
  

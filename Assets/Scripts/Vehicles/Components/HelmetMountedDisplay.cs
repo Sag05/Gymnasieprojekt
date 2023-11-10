@@ -44,7 +44,7 @@ namespace Assets.Scripts.Vehicles.Components
 
         public bool Tick()
         {
-            //Set speed text
+            //Set speed text, display in km/h
             this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
             this.gForceText.text = GForce.ToString("0.0");
             this.machText.text = (this.Velocity.magnitude / 340.29f).ToString("0.00");
@@ -59,7 +59,7 @@ namespace Assets.Scripts.Vehicles.Components
                 this.altitudeText.text = (this.Altitude / GameManager.scaleFactor).ToString("0");
                 this.radarAltitudeIndicator.enabled = false;
             }
-
+ 
             this.throttleSlider.value = this.Throttle;
             return true;
         }
