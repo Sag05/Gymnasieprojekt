@@ -3,6 +3,7 @@ using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Aircraft : VehicleBase
 {
@@ -20,6 +21,13 @@ public class Aircraft : VehicleBase
 
     string vehicleName = "F5";
     public TextMeshProUGUI DebugText;
+
+    //Temporary debug variables
+    #region TEMP
+    Vector3 lastDrag = Vector3.zero;
+    Vector3 lastLift = Vector3.zero;
+    #endregion
+
 
     new void Start()
     {
@@ -95,7 +103,7 @@ public class Aircraft : VehicleBase
             else if (component is HelmetMountedDisplay)
             {
                 HelmetMountedDisplay hmd = (HelmetMountedDisplay)component;
-                hmd.GForce = PhysicsUtils.CalculateLocalGForce(base.AngularVelocity, base.Velocity).y;
+                hmd.GForce = PhysicsUtils.CalculateLocalGForce(base.LocalAngularVelocity, base.LocalVelocity).y;
                 hmd.Velocity = base.Velocity;
                 hmd.Altitude = base.Altitude;
                 hmd.RadarAltitude = base.RadarAltitude;
@@ -115,6 +123,7 @@ public class Aircraft : VehicleBase
 
         //Lift
         Vector3 lift = PhysicsUtils.CalculatelTotalLift(
+            this.DebugText,
             base.LocalVelocity,
             this.AircraftConfiguration.liftCurve,
             this.AircraftConfiguration.inducedDragCurve,
@@ -128,22 +137,55 @@ public class Aircraft : VehicleBase
         this.VehicleBody.AddRelativeForce(lift + drag);
         this.VehicleBody.AddRelativeForce(Vector3.forward * totalThrust);
 
-        DebugText.text =
-            "Drag: " + drag.ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
-            "N\nLift: " + lift.ToString("0.0") + "N + T: " + lift.magnitude.ToString("0.0") +
+        #region Debug
+        
+        if(drag.x >= lastDrag.x + 100 || drag.y >= lastDrag.y + 100 || drag.z >= lastDrag.z + 100 || drag.x <= lastDrag.x - 100 || drag.y <= lastDrag.y - 100 || drag.z <= lastDrag.z - 100 && drag != Vector3.zero)
+        {
+            Debug.LogWarning("Drag: " + transform.rotation * drag + "N");
+        }
+        if (lift.x >= lastLift.x + 100 || lift.y >= lastLift.y + 100 || lift.z >= lastLift.z + 100 || lift.x <= lastLift.x - 100 || lift.y <= lastLift.y - 100 || lift.z <= lastLift.z - 100 && lift != Vector3.zero)
+        {
+            Debug.LogWarning("Lift: " + transform.rotation *  lift + "N");
+        }
+        
+
+        #region DrawVectors
+        //Lift
+        Debug.DrawRay(base.transform.position, transform.rotation * lift, Color.green);
+        //Drag
+        Debug.DrawRay(base.transform.position, transform.rotation * drag, Color.red);
+        //Thrust
+        Debug.DrawRay(base.transform.position, transform.rotation * Vector3.forward * totalThrust, Color.blue);
+        //Gravity
+        Debug.DrawRay(base.transform.position, base.VehicleBody.mass * 9.81f * Vector3.down, Color.black);
+
+        Debug.DrawRay(base.transform.position, base.VehicleBody.velocity, Color.white);
+        #endregion
+        
+        DebugText.text +=
+            "Drag: " + (transform.rotation * drag).ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
+            "N\nLift: " + (transform.rotation * lift).ToString("0.0") + "N + T: " + lift.magnitude.ToString("0.0") +
             "N\nGravity: " + (base.VehicleBody.mass * 9.81f).ToString("0.0") + 
             "N\nThrust: " + totalThrust.ToString("0.0") + 
             "N\nThrottle: " + this.Throttle.ToString("0.0") + "%" +
             "\nInput: " + controlInput.ToString("0.0") +
-            "\nSteering: " + steering.vector1.ToString("0.0");
+            "\nSteering: " + steering.vector1.ToString("0.0") + 
+            "\nAOA: " + PhysicsUtils.CalculateAngleOfAttack(base.LocalVelocity).ToString("0.0") + 
+            "\nRudderAOA: " + PhysicsUtils.CalculateAngleOfAttackYaw(base.LocalVelocity).ToString("0.0");
 
         /*Log forces
         Debug.Log("Drag: " + drag + 
             "N\nLift: " + lift + 
             "N\nThrust: " + totalThrust + 
             "N\nGravity: " + base.VehicleBody.mass * 9.81f);*/
-
+        
+        lastDrag = drag;
+        lastLift = lift;
+       
         #endregion
+        
+        #endregion
+
         //Run post update on base
         base.PostUpdate();
     }

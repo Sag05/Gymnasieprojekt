@@ -1,6 +1,5 @@
 ﻿using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Scripts.Vehicles.Components
 {
@@ -34,7 +33,7 @@ namespace Assets.Scripts.Vehicles.Components
         public float RadarAltitude { private get; set; }
         public float GForce { private get; set; }
 
-        public bool Tick()
+        public bool PostTick()
         {
             //Set speed text, display in km/h
             this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
@@ -54,6 +53,6 @@ namespace Assets.Scripts.Vehicles.Components
              return true;
         }
         public bool PreTickComponent() => true;
-        public bool PostTickComponent() => this.Tick();
+        public bool PostTickComponent() => this.PostTick();
     }
 }

@@ -2,10 +2,11 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Globalization;
 using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using UnityEngine;
-using System.Reflection;
 
 namespace Assets.Scripts
 {
@@ -15,6 +16,10 @@ namespace Assets.Scripts
 
         public static AircraftConfiguration LoadAircraft(string configName, VehicleBase caller)
         {
+            CultureInfo culture = CultureInfo.GetCultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
+
             bool ApplyFieldToObject(ref object obj, string fieldName, string statementValue)
             {
                 FieldInfo objectFieldInfo = null;
@@ -34,11 +39,10 @@ namespace Assets.Scripts
                     return false;
                 }
 
-
                 if (objectFieldInfo is not null)
                 {
                     //if (objectFieldInfo.FieldType == typeof(int)) objectFieldInfo.SetValue(obj, int.Parse(statementValue));
-
+                    Debug.Log("ObjectFieldInfo: " + objectFieldInfo.Name + " " + objectFieldInfo.FieldType + "\nStatementValue: " + statementValue);
                     if (objectFieldInfo.FieldType == typeof(string))
                         objectFieldInfo.SetValue(obj, statementValue);
                     else if (objectFieldInfo.FieldType == typeof(int))
@@ -52,6 +56,7 @@ namespace Assets.Scripts
                 }
                 else
                 {
+                    Debug.Log("ObjectPropInfo: " + objectPropInfo.Name + " " + objectPropInfo.PropertyType + "\nStatementValue: " + statementValue);
                     if (objectPropInfo.PropertyType == typeof(string))
                         objectPropInfo.SetValue(obj, statementValue);
                     else if (objectPropInfo.PropertyType == typeof(int))
@@ -158,7 +163,6 @@ namespace Assets.Scripts
 
                         // Value handling
                         default:
-
                             switch (CurrentConfigurationContext)
                             {
                                 case CONFIGCONTEXT.AIRCRAFTCONFIG:
@@ -176,67 +180,6 @@ namespace Assets.Scripts
                     }
                 }
             }
-
-            #region oldCode
-            /*
-            string[] input = File.ReadAllLines(configName);
-            foreach (string line in input)
-            {
-                string modifiedLine = line.ToLower();
-                modifiedLine = modifiedLine.Replace(" ", "");
-                string[] split = modifiedLine.Split(',');
-                switch (split[0])
-                {
-                    case "#":
-                        break;
-                    case "":
-                        break;
-                    case "component":
-                        switch (split[1])
-                        {
-                            case "aircraftengine":
-                                Debug.Log("Hitpoints = " + split[2] + ", TurbineMaxRPM = " + split[3] + ", TurbineAcceleration = " + split[4] + ", Max Thrust = " + split[5]);
-                                aircraftConfiguration.VehicleComponents.Add(new AircraftEngine(caller)
-                                {
-                                    HitPoints = float.Parse(split[2]),
-                                    TurbineMaxRPM = float.Parse(split[3]),
-                                    TurbineAcceleration = float.Parse(split[4]),
-                                    MaxThrust = float.Parse(split[5])
-                                });
-                                break;
-                            case "helmetmounteddisplay":
-                                aircraftConfiguration.VehicleComponents.Add(new HelmetMountedDisplay(caller)
-                                {
-                                    HitPoints = float.Parse(split[2])
-                                });
-                                break;
-                            default:
-                                throw new Exception("Unknown component type");
-                        }
-                        break;
-
-                    case "liftcurve":
-                        aircraftConfiguration.liftCurve = new AnimationCurve();
-                        for (int i = 1; i < split.Length; i++)
-                        {
-                            string[] curveSplit = split[i].Split(':');
-                            aircraftConfiguration.liftCurve.AddKey(float.Parse(curveSplit[0]), float.Parse(curveSplit[1]));
-                        }
-                        break;
-
-                    case "frontarea":
-                        aircraftConfiguration.FrontalArea = float.Parse(split[1]);
-                        break;
-
-                    case "mass":
-                        aircraftConfiguration.Mass = float.Parse(split[1]);
-                        break;
-                    default:
-                        throw new Exception("Unknown configuration parameter");
-                }
-            }
-            */
-            #endregion
             return (AircraftConfiguration)aircraftConfiguration;
         }
     }

@@ -8,7 +8,7 @@ namespace Assets.Scripts.Vehicles
     public class VehicleConfigurationBase
     {
         public IList<ComponentBase> VehicleComponents { get; set; } = new List<ComponentBase>();
-        public float Mass { get; set; }
+        public int Mass { get; set; }
     }
 
     [Serializable]
