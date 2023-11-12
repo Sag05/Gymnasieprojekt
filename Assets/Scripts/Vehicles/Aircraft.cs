@@ -3,7 +3,7 @@ using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Aircraft : VehicleBase
 {
@@ -11,26 +11,39 @@ public class Aircraft : VehicleBase
     private float rollInput;
     private float yawInput;
     private float pitchInput;
-    */
+    */  
     private float throttleInput;
     
     private DoubleVector3 steering = new DoubleVector3();
 
     private AircraftConfiguration AircraftConfiguration;
     public Vector3 controlInput { get => new Vector3( Input.GetAxis("Pitch"), Input.GetAxis("Yaw"), Input.GetAxis("Roll")); }
+    
+    bool emulateInput = false;
+    Vector3 emulatedInput = new Vector3();
+    Slider pitchSlider;
+    Slider rollSlider;
+    Slider yawSlider;
 
     string vehicleName = "F5";
     public TextMeshProUGUI DebugText;
 
-    //Temporary debug variables
+    /*Temporary debug variables
     #region TEMP
     Vector3 lastDrag = Vector3.zero;
     Vector3 lastLift = Vector3.zero;
     #endregion
-
+    */
 
     new void Start()
     {
+        pitchSlider = Utilities.GetSlider("PitchSlider");
+        rollSlider = Utilities.GetSlider("RollSlider");
+        yawSlider = Utilities.GetSlider("YawSlider");
+        pitchSlider.gameObject.SetActive(false);
+        rollSlider.gameObject.SetActive(false);
+        yawSlider.gameObject.SetActive(false);
+
         this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\" + vehicleName + ".cfg", this);
 
         base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
@@ -60,12 +73,26 @@ public class Aircraft : VehicleBase
         //Update Throttle
         this.throttleInput = Input.GetAxis("Throttle");
 
-        steering = PhysicsUtils.Steering(
-            base.LocalVelocity, base.LocalAngularVelocity,
-            this.AircraftConfiguration.steeringCurve,
-            this.controlInput, this.AircraftConfiguration.turnSpeed,
-            this.AircraftConfiguration.turnAcceleration, this.AircraftConfiguration.pitchGLimit,
-            this.AircraftConfiguration.gLimit);
+        if(emulateInput)
+        {
+            emulatedInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
+
+            steering = PhysicsUtils.Steering(
+                base.LocalVelocity, base.LocalAngularVelocity,
+                this.AircraftConfiguration.steeringCurve,
+                this.emulatedInput, this.AircraftConfiguration.turnSpeed,
+                this.AircraftConfiguration.turnAcceleration, this.AircraftConfiguration.pitchGLimit,
+                this.AircraftConfiguration.gLimit);
+        }
+        else
+        {
+            steering = PhysicsUtils.Steering(
+                base.LocalVelocity, base.LocalAngularVelocity,
+                this.AircraftConfiguration.steeringCurve,
+                this.controlInput, this.AircraftConfiguration.turnSpeed,
+                this.AircraftConfiguration.turnAcceleration, this.AircraftConfiguration.pitchGLimit,
+                this.AircraftConfiguration.gLimit);
+        }
 
         //Apply steering
         base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
@@ -73,6 +100,13 @@ public class Aircraft : VehicleBase
         if (Input.GetButtonDown("Debug"))
         {
             DebugText.enabled = !DebugText.enabled;
+        }
+        if (Input.GetButtonDown("Debug1"))
+        {
+            emulateInput = !emulateInput;
+            pitchSlider.gameObject.SetActive(!pitchSlider.gameObject.activeSelf);
+            rollSlider.gameObject.SetActive(!rollSlider.gameObject.activeSelf);
+            yawSlider.gameObject.SetActive(!yawSlider.gameObject.activeSelf);
         }
     }
 
@@ -121,6 +155,7 @@ public class Aircraft : VehicleBase
             base.Altitude, this.AircraftConfiguration.FrontalArea, 
             base.LocalVelocity);
 
+        /*
         //Lift
         Vector3 lift = PhysicsUtils.CalculatelTotalLift(
             this.DebugText,
@@ -130,15 +165,19 @@ public class Aircraft : VehicleBase
             this.AircraftConfiguration.airPreassureCoefficient,
             this.AircraftConfiguration.liftPower,
             this.AircraftConfiguration.rudderLiftCurve,
-            this.AircraftConfiguration.rudderInducedDragCurve,
-            this.AircraftConfiguration.rudderLiftPower);
-        
+            this.AircraftConfiguration.rudderLiftPower,
+            this.AircraftConfiguration.inducedDragCoefficient);
+        */
+        Vector3 lift = PhysicsUtils.CalculateLift(this.DebugText, base.LocalVelocity, base.Velocity, transform, base.Altitude, 
+            this.AircraftConfiguration.WingSpan, this.AircraftConfiguration.WingArea, 
+            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);
+
         //Apply forces
         this.VehicleBody.AddRelativeForce(lift + drag);
         this.VehicleBody.AddRelativeForce(Vector3.forward * totalThrust);
 
         #region Debug
-        
+        /*
         if(drag.x >= lastDrag.x + 100 || drag.y >= lastDrag.y + 100 || drag.z >= lastDrag.z + 100 || drag.x <= lastDrag.x - 100 || drag.y <= lastDrag.y - 100 || drag.z <= lastDrag.z - 100 && drag != Vector3.zero)
         {
             Debug.LogWarning("Drag: " + transform.rotation * drag + "N");
@@ -147,8 +186,7 @@ public class Aircraft : VehicleBase
         {
             Debug.LogWarning("Lift: " + transform.rotation *  lift + "N");
         }
-        
-
+        */
         #region DrawVectors
         //Lift
         Debug.DrawRay(base.transform.position, transform.rotation * lift, Color.green);
@@ -161,7 +199,7 @@ public class Aircraft : VehicleBase
 
         Debug.DrawRay(base.transform.position, base.VehicleBody.velocity, Color.white);
         #endregion
-        
+        /*
         DebugText.text +=
             "Drag: " + (transform.rotation * drag).ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
             "N\nLift: " + (transform.rotation * lift).ToString("0.0") + "N + T: " + lift.magnitude.ToString("0.0") +
@@ -172,16 +210,18 @@ public class Aircraft : VehicleBase
             "\nSteering: " + steering.vector1.ToString("0.0") + 
             "\nAOA: " + PhysicsUtils.CalculateAngleOfAttack(base.LocalVelocity).ToString("0.0") + 
             "\nRudderAOA: " + PhysicsUtils.CalculateAngleOfAttackYaw(base.LocalVelocity).ToString("0.0");
+        */
 
+        //Debug.Log("Lift: " + lift);
         /*Log forces
         Debug.Log("Drag: " + drag + 
             "N\nLift: " + lift + 
             "N\nThrust: " + totalThrust + 
             "N\nGravity: " + base.VehicleBody.mass * 9.81f);*/
-        
+        /*
         lastDrag = drag;
         lastLift = lift;
-       
+        */
         #endregion
         
         #endregion

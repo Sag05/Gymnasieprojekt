@@ -49,7 +49,7 @@ namespace Assets.Scripts.Vehicles
 
         public void UpdateRadarAltitude(GameObject vehicle){
             RaycastHit hit;
-            Physics.Raycast(vehicle.transform.position, Vector3.down, out hit, 1000, LayerMask.GetMask("Terrain"));
+            Physics.Raycast(this.transform.position, Vector3.down, out hit, 1000, LayerMask.GetMask("Terrain"));
             this.RadarAltitude = hit.distance;
         }
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
@@ -7,7 +8,7 @@ namespace Assets.Scripts
         public Vector3 vector2;
     }
 
-    internal class Utilities
+    internal class Utilities : MonoBehaviour
     {
         public static Vector3 Secale6(
             Vector3 value,
@@ -37,5 +38,11 @@ namespace Assets.Scripts
 
             return result;
         }
+
+        public static Slider GetSlider(string name)
+        {
+            return GameObject.Find(name).GetComponent<Slider>();
+        }
+
     }
 }

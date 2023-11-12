@@ -21,14 +21,19 @@ namespace Assets.Scripts.Vehicles
         public float rudderLiftPower { get; set; }
         public float pitchGLimit { get; set; }
         public float gLimit { get; set; }
+        public float WingArea { get; set; }
+        public float WingSpan { get; set; }
         #endregion
 
         #region Vectors
         public Vector3 turnSpeed { get; set; }
         public Vector3 turnAcceleration { get; set; }
+        public Vector3 inducedDragCoefficient { get; set; }
         #endregion
 
         #region AnimationCurves
+        public AnimationCurve AltitudeEffectivenessCurve { get; set; }
+
         public AnimationCurve liftCurve { get; set; }
         public AnimationCurve inducedDragCurve { get; set; }
         public AnimationCurve rudderLiftCurve { get; set; }
