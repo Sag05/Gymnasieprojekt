@@ -155,7 +155,7 @@ public class Aircraft : VehicleBase
             base.Altitude, this.AircraftConfiguration.FrontalArea, 
             base.LocalVelocity);
 
-        /*
+        
         //Lift
         Vector3 lift = PhysicsUtils.CalculatelTotalLift(
             this.DebugText,
@@ -167,10 +167,11 @@ public class Aircraft : VehicleBase
             this.AircraftConfiguration.rudderLiftCurve,
             this.AircraftConfiguration.rudderLiftPower,
             this.AircraftConfiguration.inducedDragCoefficient);
-        */
-        Vector3 lift = PhysicsUtils.CalculateLift(this.DebugText, base.LocalVelocity, base.Velocity, transform, base.Altitude, 
+        
+        
+        /*Vector3 lift = PhysicsUtils.CalculateLift(this.DebugText, base.LocalVelocity, base.Velocity, transform, base.Altitude, 
             this.AircraftConfiguration.WingSpan, this.AircraftConfiguration.WingArea, 
-            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);
+            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);*/ 
 
         //Apply forces
         this.VehicleBody.AddRelativeForce(lift + drag);
@@ -188,15 +189,18 @@ public class Aircraft : VehicleBase
         }
         */
         #region DrawVectors
+        //Forward
+        Debug.DrawRay(base.transform.position, transform.forward * 100, Color.yellow);
+
         //Lift
         Debug.DrawRay(base.transform.position, transform.rotation * lift, Color.green);
         //Drag
         Debug.DrawRay(base.transform.position, transform.rotation * drag, Color.red);
         //Thrust
-        Debug.DrawRay(base.transform.position, transform.rotation * Vector3.forward * totalThrust, Color.blue);
+        Debug.DrawRay(base.transform.position, transform.forward * totalThrust, Color.blue);
         //Gravity
         Debug.DrawRay(base.transform.position, base.VehicleBody.mass * 9.81f * Vector3.down, Color.black);
-
+        //Velocity
         Debug.DrawRay(base.transform.position, base.VehicleBody.velocity, Color.white);
         #endregion
         /*
