@@ -41,8 +41,6 @@ namespace Assets.Scripts
 
                 if (objectFieldInfo is not null)
                 {
-                    //if (objectFieldInfo.FieldType == typeof(int)) objectFieldInfo.SetValue(obj, int.Parse(statementValue));
-                    Debug.Log("ObjectFieldInfo: " + objectFieldInfo.Name + " " + objectFieldInfo.FieldType + "\nStatementValue: " + statementValue);
                     if (objectFieldInfo.FieldType == typeof(string))
                         objectFieldInfo.SetValue(obj, statementValue);
                     else if (objectFieldInfo.FieldType == typeof(int))

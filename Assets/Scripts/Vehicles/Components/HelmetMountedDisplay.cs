@@ -37,7 +37,7 @@ namespace Assets.Scripts.Vehicles.Components
         {
             //Set speed text, display in km/h
             this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
-            this.gForceText.text = GForce.ToString("0.0") + "G";
+            this.gForceText.text = (GForce + 1).ToString("0.0") + "G";
             this.machText.text = (this.Velocity.magnitude / 340.29f / GameManager.scaleFactor).ToString("0.00") + "M";
 
             //Set altitude text. if radar altitude is less than 200(2000m), use that instead

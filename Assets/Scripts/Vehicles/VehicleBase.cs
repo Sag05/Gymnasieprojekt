@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Vehicles.Components;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -39,7 +40,7 @@ namespace Assets.Scripts.Vehicles
 
         public void PreUpdate()
         {
-
+            UpdateRadarAltitude();
         }
 
         public void PostUpdate()
@@ -47,7 +48,7 @@ namespace Assets.Scripts.Vehicles
             this.LastVelocity = this.Velocity;
         }   
 
-        public void UpdateRadarAltitude(GameObject vehicle){
+        public void UpdateRadarAltitude(){
             RaycastHit hit;
             Physics.Raycast(this.transform.position, Vector3.down, out hit, 1000, LayerMask.GetMask("Terrain"));
             this.RadarAltitude = hit.distance;

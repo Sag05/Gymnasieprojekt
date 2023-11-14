@@ -123,7 +123,6 @@ public class PhysicsUtils : MonoBehaviour
     /// <returns></returns>
     public static Vector3 CalculateLocalGForce(Vector3 localAngularVelocity, Vector3 localVelocity)
     {
-        //get => Vector3.Cross(AngularVelocity, Velocity); 
         return Vector3.Cross(localAngularVelocity, localVelocity);
     }
     #endregion
@@ -136,7 +135,6 @@ public class PhysicsUtils : MonoBehaviour
     /// <returns></returns>
     public static float CalculateAngleOfAttack(Vector3 localVelocity) 
     { 
-        //get => Mathf.Atan2(-this.LocalVelocity.y, this.LocalVelocity.z); 
         return MathF.Atan2(-localVelocity.y, localVelocity.z);
     }
     
@@ -207,52 +205,6 @@ public class PhysicsUtils : MonoBehaviour
     */
     #endregion
 
-    #region newLift
-    #region Referance
-    //https://www.phind.com/search?cache=itn0w9vl2cr6hia4ix2rc2gm
-    //private static Vector3 CalculateLift(TextMeshProUGUI debugText, AnimationCurve liftCurve, AnimationCurve inducedDragCurve, Vector3 rightAxis,
-    //float airPreasureCoefficient, Vector3 localVelocity, float angleOfAttack, float liftPower, Vector3 inducedDragCoefficient, float wingSpan, float wingArea)
-    //{
-    //    // Move localVelocity to local-space and solve for AoA with trigonometry
-    //    var localVelocity = transform.InverseTransformDirection(rb.velocity);
-    //    var angleOfAttack = Mathf.Atan2(-localVelocity.y, localVelocity.z);
-
-    //    // Simplify your equations with Lifting Line Theory
-    //    var aspectRatio = (wingSpan * wingSpan) / wingArea;
-    //    var inducedLift = angleOfAttack * (aspectRatio / (aspectRatio + 2f)) * 2f * Mathf.PI;
-    //    var inducedDrag = (inducedLift * inducedLift) / (aspectRatio * Mathf.PI);
-
-    //    // Compute the lift direction by crossing the normalized velocity vector with the aircraft's lateral direction and apply drag opposite to velocity
-    //    var dragDirection = -rb.velocity.normalized;
-    //    var liftDirection = Vector3.Cross(dragDirection, transform.right);
-
-    //    // Lift + Drag = Total Force
-    //    rb.AddForce(liftDirection * lift - dragDirection * drag);
-    //}
-    #endregion
-
-    public static Vector3 CalculateLift(TextMeshProUGUI debugText, Vector3 localVelocity, Vector3 velocity, Transform transform, float altitude, float wingSpan, float wingArea, float liftPower, AnimationCurve altitudeEffectiveness)
-    {
-        wingSpan *= GameManager.scaleFactor;
-        wingArea *= GameManager.scaleFactor;
-
-        float aspectRatio = (wingSpan * wingSpan) / wingArea;
-        float inducedLift = CalculateAngleOfAttack(localVelocity) * (aspectRatio / (aspectRatio + 2f)) * 2f * Mathf.PI; //* liftPower;
-        float inducedDrag = (inducedLift * inducedLift) / (aspectRatio * Mathf.PI);
-
-        //Vector3 dragDirection = -transform.forward;
-        //Vector3 liftDirection = transform.up;
-        Vector3 dragDirection = -velocity.normalized;
-        Vector3 liftDirection = velocity.normalized;
-        
-        Vector3 lift = liftDirection * inducedLift - dragDirection * inducedDrag;
-        debugText.text = "lift: " + lift + "\n  inducedLift: " + inducedLift + "\n  inducedDrag: " + inducedDrag;
-        return lift;
-    }
-
-    #endregion
-
-    // OLD LIFT
     #region Lift
     /// <summary>
     /// Calculate Lift 
@@ -266,87 +218,61 @@ public class PhysicsUtils : MonoBehaviour
     /// <param name="angleOfAttack"></param>
     /// <param name="liftPower"></param>
     /// <returns></returns>
-
-    /* private static Vector3 CalculateLiftT(TextMeshProUGUI debugText, AnimationCurve liftCurve, AnimationCurve inducedDragCurve, Vector3 rightAxis,
-     float airPreasureCoefficient, Vector3 localVelocity, float angleOfAttack, float liftPower)
-     {
-         //Project velocity onto plane
-         Vector2 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);
-
-         //Calculate flight path angle
-         float flightPathAngle = Vector3.Angle(localVelocity, Vector3.forward);
-
-         //Coefficiient varies with aoa
-         float liftCoefficient = liftCurve.Evaluate(angleOfAttack * Mathf.Rad2Deg);
-         float liftForce = liftVelocity.sqrMagnitude * liftCoefficient * liftPower * Mathf.Cos(flightPathAngle * Mathf.Deg2Rad);
-
-         //Lift is perpendicular to velocity
-         Vector3 lift = Vector3.Cross(liftVelocity, rightAxis) * liftForce;
-
-         //Continue as before...
-     }*/
-
-
     private static Vector3 CalculateLift(TextMeshProUGUI debugText, AnimationCurve liftCurve, AnimationCurve inducedDragCurve, Vector3 rightAxis,
-       float airPreasureCoefficient, Vector3 localVelocity, float angleOfAttack, float liftPower, Vector3 inducedDragCoefficient)
+       float airPreasureCoefficient, Vector3 localVelocity, float angleOfAttack, float liftPower, float inducedDragCoefficient)
     {
-       //Project velocity onto plane
-       Vector2 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);
+        //Project velocity onto plane
+        Vector3 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);        
 
-       //Coefficiient vaies with aoa
-       float liftCoefficient = liftCurve.Evaluate(angleOfAttack * Mathf.Rad2Deg);
+        //Coefficiient vaies with aoa
+        float liftCoefficient = liftCurve.Evaluate(angleOfAttack * Mathf.Rad2Deg);
 
-       //Calculate flight path angle
-       //float flightPathAngle = Vector3.Angle(localVelocity, Vector3.forward);
-
-       //float liftForce = liftVelocity.sqrMagnitude * liftCoefficient * liftPower * Mathf.Cos(flightPathAngle * Mathf.Deg2Rad);
-       // Without flight path angle
-       float liftForce = liftVelocity.sqrMagnitude * liftCoefficient * liftPower;
+        //liftforce
+        float liftForce = liftVelocity.sqrMagnitude * liftCoefficient * liftPower;
        
+        //Lift is perpendicular to velocity
+        Vector3 lift = Vector3.Cross(liftVelocity, rightAxis) * liftForce;
 
-       //Lift is perpendicular to velocity
-       Vector3 lift = Vector3.Cross(liftVelocity, rightAxis) * liftForce;
-
-       //incued drag
-       float dragForce = liftCoefficient * liftCoefficient;
-       Vector3 inducedDrag = dragForce * inducedDragCurve.Evaluate(Mathf.Max(0, localVelocity.z)) * liftVelocity.sqrMagnitude * inducedDragCoefficient * -liftVelocity.normalized;
-
-       //Air preassure
-       Vector3 airPreassure = airPreasureCoefficient * localVelocity.sqrMagnitude * -liftVelocity.normalized;
+        //incued drag
+        float dragForce = liftCoefficient * liftCoefficient;
+        Vector3 inducedDrag = dragForce * inducedDragCurve.Evaluate(Mathf.Max(0, localVelocity.z)) * liftVelocity.sqrMagnitude * inducedDragCoefficient * -liftVelocity.normalized;
 
         #region Debug
 
-       debugText.text = "Lift Velocity: " + liftVelocity + 
-           "\nLift Coefficient: " + liftCoefficient + 
-           "\n  Angle of Attack: " + angleOfAttack * Mathf.Rad2Deg +
-           //"\nFlight Path Angle: " + flightPathAngle +
-           "\nLift Force: " + liftForce +
-           "\n  liftVeloityM: " + liftVelocity.sqrMagnitude +
-           "\n  liftCoefficient: " + liftCoefficient +
-           "\n  liftPower: " + liftPower +
-           //"\n  Angle: " + Mathf.Cos(flightPathAngle * Mathf.Deg2Rad) +
-           "\nLift: " + lift +
-           "\n  Cross: " + Vector3.Cross(liftVelocity, rightAxis) +
-           "\n    LiftVelocity: " + liftVelocity + "\n    RightAxis: " + rightAxis +
-           "\n  liftForce: " + liftForce +
-           "\nDragForce(LCf^2): " + dragForce +
-           "\n  liftCoefficient: " + liftCoefficient +
-           "\nInduced Drag: " + inducedDrag +
-           "\n  dragForce: " + dragForce +
-           "\n  liftVelocityM: " + liftVelocity.sqrMagnitude +
-           "\n  inducedDragCoefficient: " + inducedDragCoefficient +
-           "\n  inducedDragCurve: " + inducedDragCurve.Evaluate(Mathf.Max(0, localVelocity.z)) +
-           "\n    localVelocity.z: " + localVelocity.z +   
-           "\n  liftVelocity.normalized: " + -liftVelocity.normalized +
-           "\nAirPreassure: " + airPreassure + 
-           "\n  APCf: " + airPreasureCoefficient + 
-           "\n  LV2: " + localVelocity.sqrMagnitude + 
-           "\n  velocity: " + -liftVelocity.normalized;
+        /*EVERYTHING
+        debugText.text = "Lift Velocity: " + liftVelocity + 
+            "\nLift Coefficient: " + liftCoefficient + 
+            "\n  Angle of Attack: " + angleOfAttack * Mathf.Rad2Deg +
+            //"\nFlight Path Angle: " + flightPathAngle +
+            "\nLift Force: " + liftForce +
+            "\n  liftVeloityM: " + liftVelocity.sqrMagnitude +
+            "\n  liftCoefficient: " + liftCoefficient +
+            "\n  liftPower: " + liftPower +
+            //"\n  Angle: " + Mathf.Cos(flightPathAngle * Mathf.Deg2Rad) +
+            "\nLift: " + lift +
+            "\n  Cross: " + Vector3.Cross(liftVelocity, rightAxis) +
+            "\n    LiftVelocity: " + liftVelocity + "\n    RightAxis: " + rightAxis +
+            "\n  liftForce: " + liftForce +
+            "\nDragForce(LCf^2): " + dragForce +
+            "\n  liftCoefficient: " + liftCoefficient +
+            "\nInduced Drag: " + inducedDrag +
+            "\n  dragForce: " + dragForce +
+            "\n  liftVelocityM: " + liftVelocity.sqrMagnitude +
+            "\n  inducedDragCoefficient: " + inducedDragCoefficient +
+            "\n  inducedDragCurve: " + inducedDragCurve.Evaluate(Mathf.Max(0, localVelocity.z)) +
+            "\n    localVelocity.z: " + localVelocity.z +   
+            "\n  liftVelocity.normalized: " + -liftVelocity.normalized +
+            "\nAirPreassure: " + airPreassure + 
+            "\n  APCf: " + airPreasureCoefficient + 
+            "\n  LV2: " + localVelocity.sqrMagnitude + 
+            "\n  velocity: " + -liftVelocity.normalized;
+        */
+        
+        //debugText.text = "Lift: " + lift + "\nInduced Drag: " + inducedDrag  + "\n";
 
-
-       //debugText.text = (lift * airPreassure).ToString() + (inducedDrag * airPreassure).ToString();
         #endregion
-       return lift + airPreassure + inducedDrag;
+
+        return lift + inducedDrag; 
     }
 
     #region Referance
@@ -385,21 +311,12 @@ public class PhysicsUtils : MonoBehaviour
     /// <param name="rudderLiftPower"></param>
     /// <returns></returns>
     public static Vector3 CalculatelTotalLift(TextMeshProUGUI debugText, Vector3 localVelocity, AnimationCurve aOACurve, AnimationCurve inducedDragCurve, 
-       float airPreasureCoefficient, float liftPower, AnimationCurve rudderAOACurve, float rudderLiftPower, Vector3 inducedDragCoefficient)
+       float airPreasureCoefficient, float liftPower, AnimationCurve rudderAOACurve, float rudderLiftPower, float inducedDragCoefficient)
     {
        Vector3 verticalLift = CalculateLift(debugText, aOACurve, inducedDragCurve, Vector3.right, airPreasureCoefficient, localVelocity, CalculateAngleOfAttack(localVelocity), liftPower, inducedDragCoefficient);
        Vector3 rudderLift = CalculateLift(debugText, rudderAOACurve, inducedDragCurve, Vector3.up, airPreasureCoefficient, localVelocity, CalculateAngleOfAttackYaw(localVelocity), rudderLiftPower, inducedDragCoefficient);
 
-       #region Test
-       //Vector3 verticalLift = CalculateLift(localVelocity, CalculateAngleOfAttack(localVelocity), inducedDragCoefficient, Vector3.right, liftPower, aOACurve, inducedDragCurve);
-       //Vector3 rudderLift = CalculateLift(localVelocity, CalculateAngleOfAttackYaw(localVelocity), inducedDragCoefficient, Vector3.up, rudderLiftPower, rudderAOACurve, inducedDragCurve);
-
-       //Vector3 force = Quaternion.AngleAxis(-90, Vector3.forward) * verticalLift + rudderLift;
-
-       //Vector3 force = new Vector3(verticalLift.x + rudderLift.x, verticalLift.y + rudderLift.y, verticalLift.z + rudderLift.z);
-       #endregion
        return verticalLift + rudderLift;
     }
     #endregion
-
 }
