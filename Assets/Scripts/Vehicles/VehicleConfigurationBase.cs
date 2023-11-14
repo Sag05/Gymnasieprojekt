@@ -23,12 +23,12 @@ namespace Assets.Scripts.Vehicles
         public float gLimit { get; set; }
         public float WingArea { get; set; }
         public float WingSpan { get; set; }
+        public float inducedDragCoefficient { get; set; }
         #endregion
 
         #region Vectors
         public Vector3 turnSpeed { get; set; }
         public Vector3 turnAcceleration { get; set; }
-        public Vector3 inducedDragCoefficient { get; set; }
         #endregion
 
         #region AnimationCurves
