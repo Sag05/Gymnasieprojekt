@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
@@ -7,6 +8,30 @@ namespace Assets.Scripts
         public Vector3 vector1;
         public Vector3 vector2;
     }
+
+    public enum OrdinanceType
+    {
+        AirToAirMissile,
+        AirToGroundMissile,
+        Bomb,
+        Rocket,
+        Gun,
+        Pod,
+        FuelTank
+    }
+
+    public enum GuidanceType
+    {
+        None,
+        ActiveRadar,
+        Infrared,
+        Laser,
+        TV,
+        GPS,
+        INS,
+        AntiRadiation
+    }
+
 
     internal class Utilities : MonoBehaviour
     {
@@ -43,6 +68,11 @@ namespace Assets.Scripts
         public static Slider GetSlider(string name)
         {
             return GameObject.Find(name).GetComponent<Slider>();
+        }
+
+        public static TextMeshProUGUI GetText(string name)
+        {
+            return GameObject.Find(name).GetComponent<TextMeshProUGUI>();
         }
 
     }

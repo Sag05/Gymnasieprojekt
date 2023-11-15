@@ -49,8 +49,12 @@ namespace Assets.Scripts
                         objectFieldInfo.SetValue(obj, float.Parse(statementValue));
                     else if (objectFieldInfo.FieldType == typeof(double))
                         objectFieldInfo.SetValue(obj, double.Parse(statementValue));
+                    else if (objectFieldInfo.FieldType == typeof(bool))
+                        objectFieldInfo.SetValue(obj, bool.Parse(statementValue));
                     else if (objectFieldInfo.FieldType == typeof(Vector3))
                         objectFieldInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
+                    else if (objectFieldInfo.FieldType == typeof(List<>))
+                        objectFieldInfo.SetValue(obj, statementValue.Split(',').ToList());
                 }
                 else
                 {
@@ -63,13 +67,18 @@ namespace Assets.Scripts
                         objectPropInfo.SetValue(obj, float.Parse(statementValue));
                     else if (objectPropInfo.PropertyType == typeof(double))
                         objectPropInfo.SetValue(obj, double.Parse(statementValue));
+                    else if (objectPropInfo.PropertyType == typeof(bool))
+                        objectPropInfo.SetValue(obj, bool.Parse(statementValue));
                     else if (objectPropInfo.PropertyType == typeof(Vector3))
                         objectPropInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
+                    else if (objectPropInfo.PropertyType == typeof(List<>))
+                        objectPropInfo.SetValue(obj, statementValue.Split(',').ToList());
                 }
 
                 Debug.Log("APPLIED [" + fieldName + "] = [" + statementValue + "]");
                 return true;
             }
+
 
             bool ApplyAnimationCurve(ref object obj, string curveName, List<Keyframe> keyframes)
             {

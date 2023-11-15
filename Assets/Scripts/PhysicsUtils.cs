@@ -139,11 +139,11 @@ public class PhysicsUtils : MonoBehaviour
     #endregion
 
     #region Drag 
-    public static Vector3 CalculateDrag(Vector3 localVelocity, float altitude, AnimationCurve altitudeEffectivenessCurve, AnimationCurve sideDrag, AnimationCurve topDrag, AnimationCurve frontDrag)
+    public static Vector3 CalculateDrag(Vector3 localVelocity, float altitude, AnimationCurve altitudeEffectivenessCurve, AnimationCurve sideDrag, AnimationCurve topDrag, AnimationCurve frontDrag, float additionalDragCoefficient)
     {
         float sideDragCoefficient = sideDrag.Evaluate(Mathf.Abs(localVelocity.x));
         float topDragCoefficient = topDrag.Evaluate(Mathf.Abs(localVelocity.y));
-        float forwardDragCoefficient = frontDrag.Evaluate(Mathf.Abs(localVelocity.z));
+        float forwardDragCoefficient = frontDrag.Evaluate(Mathf.Abs(localVelocity.z)) + additionalDragCoefficient;
         
         Vector3 totalDragCoefficient = Utilities.Secale6(localVelocity.normalized,
             sideDragCoefficient, sideDragCoefficient,

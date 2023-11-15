@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEditor;
+using System.Collections.Generic;
 
 public class Aircraft : VehicleBase
 {
@@ -23,7 +24,7 @@ public class Aircraft : VehicleBase
 
     TextMeshProUGUI DebugText;
 
-    GameObject model;
+    public GameObject model;
     Animation gearAnimation;
 
     #region Input
@@ -54,15 +55,20 @@ public class Aircraft : VehicleBase
 
     private void LoadModel(){
         //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
-        model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
+        //model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Aircraft/" + AircraftConfiguration.ModelName), transform);
+        model = GameObject.Find(AircraftConfiguration.ModelName);
+
+
+        gearAnimation = model.AddComponent<Animation>();
     }
 
     new void Start()
     {
         this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+        base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
         LoadModel();
         
-
+        DebugText = Utilities.GetText("DebugText");
         pitchSlider = Utilities.GetSlider("PitchSlider");
         rollSlider = Utilities.GetSlider("RollSlider");
         yawSlider = Utilities.GetSlider("YawSlider");
@@ -72,7 +78,6 @@ public class Aircraft : VehicleBase
         yawSlider.gameObject.SetActive(false);
 
 
-        base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
 
         foreach (ComponentBase component in base.VehicleComponents)
         {
@@ -111,7 +116,7 @@ public class Aircraft : VehicleBase
         this.Throttle = Mathf.Clamp(this.Throttle + this.throttleInput, 0f, 100f);
         //Reset thrust
         float totalThrust = 0;
-
+        float additionalDrag = 0;
         //Go through all components
         foreach (ComponentBase component in this.VehicleComponents)
         {
@@ -147,7 +152,7 @@ public class Aircraft : VehicleBase
         #region ForceCalculation
         //Drag
         Vector3 drag = PhysicsUtils.CalculateDrag(base.LocalVelocity, base.Altitude, AircraftConfiguration.AltitudeEffectivenessCurve,
-            this.AircraftConfiguration.SideDragCurve, this.AircraftConfiguration.TopDragCurve, this.AircraftConfiguration.FrontDragCurve);
+            this.AircraftConfiguration.SideDragCurve, this.AircraftConfiguration.TopDragCurve, this.AircraftConfiguration.FrontDragCurve, additionalDrag);
 
         /*Old
         Vector3 drag = PhysicsUtils.CalculateDragForce(
