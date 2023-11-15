@@ -10,6 +10,7 @@ namespace Assets.Scripts
 
     internal class Utilities : MonoBehaviour
     {
+        //https://github.com/vazgriz/FlightSim/blob/main/Assets/Scripts/Utilities.cs#L13
         public static Vector3 Secale6(
             Vector3 value,
             float xPositive, float xNegative,

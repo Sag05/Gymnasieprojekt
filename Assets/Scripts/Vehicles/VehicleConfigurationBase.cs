@@ -12,33 +12,34 @@ namespace Assets.Scripts.Vehicles
     }
 
     [Serializable]
-    public class AircraftConfiguration : VehicleConfigurationBase
+    public class AircraftConfiguration : VehicleConfigurationBase 
     {
-        #region Floats
-        public float FrontalArea { get; set; }
-        public float airPreassureCoefficient { get; set; }
-        public float liftPower { get; set; }
-        public float rudderLiftPower { get; set; }
-        public float pitchGLimit { get; set; }
-        public float gLimit { get; set; }
-        public float WingArea { get; set; }
-        public float WingSpan { get; set; }
-        public float inducedDragCoefficient { get; set; }
-        #endregion
-
-        #region Vectors
-        public Vector3 turnSpeed { get; set; }
-        public Vector3 turnAcceleration { get; set; }
-        #endregion
-
-        #region AnimationCurves
         public AnimationCurve AltitudeEffectivenessCurve { get; set; }
-
-        public AnimationCurve liftCurve { get; set; }
-        public AnimationCurve inducedDragCurve { get; set; }
-        public AnimationCurve rudderLiftCurve { get; set; }
-        public AnimationCurve rudderInducedDragCurve { get; set; }
-        public AnimationCurve steeringCurve { get; set; }
+        
+        #region Lift
+        public int LiftPower { get; set; }
+        public int RudderLiftPower { get; set; }
+        public float InducedDragCoefficient { get; set; }
+        public AnimationCurve LiftCurve { get; set; }
+        public AnimationCurve InducedDragCurve { get; set; }
+        public AnimationCurve RudderLiftCurve { get; set; }
         #endregion
+
+        #region Drag
+        public AnimationCurve SideDragCurve { get; set; }
+        public AnimationCurve TopDragCurve { get; set; }
+        public AnimationCurve FrontDragCurve { get; set; }
+        #endregion
+        
+        #region Steering
+        public float PitchGLimit { get => pitchGLimit; set { if (value < 2) throw new ArgumentOutOfRangeException("PitchGLimit", value, "PitchGLimit can not be less than 2"); this.pitchGLimit = value - 1; } }
+        private float pitchGLimit;
+        public float GLimit { get => gLimit; set { if (value < 2) throw new ArgumentOutOfRangeException("GLimit", value, "GLimit can not be less than 2"); this.gLimit = value - 1; } }
+        private float gLimit;
+        public Vector3 TurnSpeed { get; set; }
+        public Vector3 TurnAcceleration { get; set; }
+        public AnimationCurve SteeringCurve { get; set; }
+        #endregion
+
     }
 }

@@ -8,17 +8,11 @@ using UnityEngine.InputSystem;
 
 public class Aircraft : VehicleBase
 {
-    /*
-    private float rollInput;
-    private float yawInput;
-    private float pitchInput;
-    */  
     private float throttleInput;
-    
+
     private DoubleVector3 steering = new DoubleVector3();
 
     private AircraftConfiguration AircraftConfiguration;
-    //public Vector3 controlInput { get => new Vector3(Input.GetAxis("Pitch"), Input.GetAxis("Yaw"), Input.GetAxis("Roll")); }
     Vector3 controlInput = new Vector3();
 
     bool emulateInput = false;
@@ -30,14 +24,8 @@ public class Aircraft : VehicleBase
     string vehicleName = "F5";
     public TextMeshProUGUI DebugText;
 
-    public AnimationCurve test;
-
-    /*Temporary debug variables
-    #region TEMP
-    Vector3 lastDrag = Vector3.zero;
-    Vector3 lastLift = Vector3.zero;
-    #endregion
-    */
+    public GameObject model;
+    public Animation gearAnimation;
 
     #region Input
     public void OnMovement(InputValue value)
@@ -65,13 +53,12 @@ public class Aircraft : VehicleBase
     }
     #endregion  
 
-
     new void Start()
-    {     
+    {
         pitchSlider = Utilities.GetSlider("PitchSlider");
         rollSlider = Utilities.GetSlider("RollSlider");
         yawSlider = Utilities.GetSlider("YawSlider");
-        
+
         pitchSlider.gameObject.SetActive(false);
         rollSlider.gameObject.SetActive(false);
         yawSlider.gameObject.SetActive(false);
@@ -79,8 +66,6 @@ public class Aircraft : VehicleBase
         this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\" + vehicleName + ".cfg", this);
 
         base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
-
-        test = this.AircraftConfiguration.liftCurve;
 
         foreach (ComponentBase component in base.VehicleComponents)
         {
@@ -97,42 +82,19 @@ public class Aircraft : VehicleBase
 
     void Update()
     {
-        /*
-        this.rollInput = Input.GetAxis("Roll");
-        this.yawInput = Input.GetAxis("Yaw");
-        this.pitchInput =  Input.GetAxis("Pitch");
-        controlInput = this.rollInput, this.pitchInput, this.yawInput;
-        */
-
-        //Update Throttle
-        //this.throttleInput = Input.GetAxis("Throttle");
-
-        if(emulateInput)
+        DebugText.text = "";
+        if (emulateInput)
         {
-            emulatedInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
-
-            steering = PhysicsUtils.Steering(
-                base.LocalVelocity, base.LocalAngularVelocity,
-                this.AircraftConfiguration.steeringCurve,
-                this.emulatedInput, this.AircraftConfiguration.turnSpeed,
-                this.AircraftConfiguration.turnAcceleration, this.AircraftConfiguration.pitchGLimit,
-                this.AircraftConfiguration.gLimit);
+            this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
         }
-        else
-        {
-            steering = PhysicsUtils.Steering(
-                base.LocalVelocity, base.LocalAngularVelocity,
-                this.AircraftConfiguration.steeringCurve,
-                this.controlInput, this.AircraftConfiguration.turnSpeed,
-                this.AircraftConfiguration.turnAcceleration, this.AircraftConfiguration.pitchGLimit,
-                this.AircraftConfiguration.gLimit);
-        }
+        steering = PhysicsUtils.AircraftSteering(
+            base.LocalVelocity, base.LocalAngularVelocity, this.controlInput,
+            this.AircraftConfiguration, this.DebugText);
 
+        DebugText.text += "\nInput: " + this.controlInput.ToString("0.0") + "\nTurnSpeed: " + AircraftConfiguration.TurnSpeed.ToString("0.0");
         //Apply steering
         base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
-
     }
-
 
     void FixedUpdate()
     {
@@ -155,6 +117,7 @@ public class Aircraft : VehicleBase
             if (component is AircraftEngine)
             {
                 AircraftEngine engine = (AircraftEngine)component;
+                engine.Altitude = base.Altitude;
                 engine.TargetRPMFactor = Throttle / 100f;
                 //Apply thrust
                 totalThrust += engine.Thrust;
@@ -176,27 +139,22 @@ public class Aircraft : VehicleBase
 
         #region ForceCalculation
         //Drag
+        Vector3 drag = PhysicsUtils.CalculateDrag(base.LocalVelocity, base.Altitude, AircraftConfiguration.AltitudeEffectivenessCurve,
+            this.AircraftConfiguration.SideDragCurve, this.AircraftConfiguration.TopDragCurve, this.AircraftConfiguration.FrontDragCurve);
+
+        /*Old
         Vector3 drag = PhysicsUtils.CalculateDragForce(
             base.Altitude, this.AircraftConfiguration.FrontalArea, 
             base.LocalVelocity);
+        */
 
-        
         //Lift
-        Vector3 lift = PhysicsUtils.CalculatelTotalLift(
-            this.DebugText,
-            base.LocalVelocity,
-            this.AircraftConfiguration.liftCurve,
-            this.AircraftConfiguration.inducedDragCurve,
-            this.AircraftConfiguration.airPreassureCoefficient,
-            this.AircraftConfiguration.liftPower,
-            this.AircraftConfiguration.rudderLiftCurve,
-            this.AircraftConfiguration.rudderLiftPower,
-            this.AircraftConfiguration.inducedDragCoefficient);
-        
-        
+        Vector3 lift = PhysicsUtils.CalculatelTotalAircraftLift(this.DebugText, base.LocalVelocity, base.Altitude, this.AircraftConfiguration);
+
+
         /*Vector3 lift = PhysicsUtils.CalculateLift(this.DebugText, base.LocalVelocity, base.Velocity, transform, base.Altitude, 
             this.AircraftConfiguration.WingSpan, this.AircraftConfiguration.WingArea, 
-            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);*/ 
+            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);*/
 
         //Apply forces
         this.VehicleBody.AddRelativeForce(lift + drag);
@@ -220,8 +178,8 @@ public class Aircraft : VehicleBase
         #endregion
         #region Logs
         //Debug.Log("Lift: " + lift);
-        
-        
+
+
         /*
         DebugText.text += 
             "Drag: " + (transform.rotation * drag).ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
@@ -257,11 +215,16 @@ public class Aircraft : VehicleBase
         */
         #endregion
         #endregion
-        
+
         #endregion
 
         //Run post update on base
         base.PostUpdate();
     }
+
+    public void AnimationHandler()
+    {
+
+    }
+
 }
- 

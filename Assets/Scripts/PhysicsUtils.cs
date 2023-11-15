@@ -1,6 +1,6 @@
 using Assets.Scripts;
+using Assets.Scripts.Vehicles;
 using System;
-using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,14 +13,7 @@ public class PhysicsUtils : MonoBehaviour
     */
 
     #region AircaftSteering
-    /// <summary>
-    /// Calculates the steering, using <paramref name="angularVelocity"/>, <paramref name="targetVelocity"/> and <paramref name="acceleration"/>
-    /// </summary>
-    /// <param name="angularVelocity"></param>
-    /// <param name="targetVelocity"></param>
-    /// <param name="acceleration"></param>
-    /// <returns></returns>
-    private static float CalculateSteering(float angularVelocity, float targetVelocity, float acceleration)
+    private static float CalculateAircraftSteering(float angularVelocity, float targetVelocity, float acceleration)
     {
         float error = targetVelocity - angularVelocity;
         float deltaAcceleration = acceleration * Time.fixedDeltaTime;
@@ -42,23 +35,27 @@ public class PhysicsUtils : MonoBehaviour
     /// <param name="pitchGLimit"></param>
     /// <param name="gLimit"></param>
     /// <returns></returns>
-    public static DoubleVector3 Steering(Vector3 localVelocity, Vector3 localAngularVelocity, AnimationCurve steeringCurve, 
-        Vector3 controlInput, Vector3 turnSpeed, Vector3 turnAcceleration, float pitchGLimit, float gLimit)
+    public static DoubleVector3 AircraftSteering(Vector3 localVelocity, Vector3 localAngularVelocity, Vector3 controlInput,
+        AircraftConfiguration config, TextMeshProUGUI debugText)
     {
         DoubleVector3 result = new DoubleVector3();
         float speed = Mathf.Max(0, localVelocity.z);
-        float steeringPower = steeringCurve.Evaluate(speed);
+        float steeringPower = config.SteeringCurve.Evaluate(speed);
 
-        float gForceScale = CalculateGLimiter(controlInput, turnSpeed * Mathf.Deg2Rad * steeringPower, localVelocity, pitchGLimit, gLimit);
+        float gForceScale = CalculateGLimiter(controlInput, Mathf.Deg2Rad * steeringPower * config.TurnSpeed, localVelocity, config.PitchGLimit, config.GLimit);
 
-        Vector3 targetAngularVelocity = Vector3.Scale(controlInput, turnSpeed * steeringPower * gForceScale);
+        debugText.text += "Turn Speed: " + config.TurnSpeed.ToString("0.0") + 
+            "\nSteeringPower: " + steeringPower.ToString("0.0") + "\nGforecScale: " + gForceScale.ToString("0.0");
+        Vector3 targetAngularVelocity = Vector3.Scale(controlInput, config.TurnSpeed * steeringPower * gForceScale);
         Vector3 angularVelocity = localAngularVelocity * Mathf.Rad2Deg;
 
-        Vector3 correction = new Vector3(
-            CalculateSteering(angularVelocity.x, targetAngularVelocity.x, turnAcceleration.x * steeringPower),
-            CalculateSteering(angularVelocity.y, targetAngularVelocity.y, turnAcceleration.y * steeringPower),
-            CalculateSteering(angularVelocity.z, targetAngularVelocity.z, turnAcceleration.z * steeringPower));
+        Vector3 correction = new(
+            CalculateAircraftSteering(angularVelocity.x, targetAngularVelocity.x, config.TurnAcceleration.x * steeringPower),
+            CalculateAircraftSteering(angularVelocity.y, targetAngularVelocity.y, config.TurnAcceleration.y * steeringPower),
+            CalculateAircraftSteering(angularVelocity.z, targetAngularVelocity.z, config.TurnAcceleration.z * steeringPower));
         result.vector1 = correction * Mathf.Deg2Rad;
+
+
 
         /* Debug 
         Debug.Log("Correction: " + correction.ToString("0.0") + 
@@ -72,9 +69,9 @@ public class PhysicsUtils : MonoBehaviour
         #region EffectiveInput
 
         Vector3 correctionInput = new Vector3(
-            Mathf.Clamp((targetAngularVelocity.x - angularVelocity.x)/turnAcceleration.x, -1, 1),
-            Mathf.Clamp((targetAngularVelocity.y - angularVelocity.y)/turnAcceleration.y, -1, 1),
-            Mathf.Clamp((targetAngularVelocity.z - angularVelocity.z)/turnAcceleration.z, -1, 1));
+            Mathf.Clamp((targetAngularVelocity.x - angularVelocity.x)/ config.TurnAcceleration.x, -1, 1),
+            Mathf.Clamp((targetAngularVelocity.y - angularVelocity.y)/ config.TurnAcceleration.y, -1, 1),
+            Mathf.Clamp((targetAngularVelocity.z - angularVelocity.z)/ config.TurnAcceleration.z, -1, 1));
 
         Vector3 effectiveInput = (correctionInput + controlInput) * gForceScale;
 
@@ -89,15 +86,6 @@ public class PhysicsUtils : MonoBehaviour
         return result;
     }
 
-    /// <summary>
-    /// Calculates the G limiter, using the <paramref name="controlinput"/>, <paramref name="maxAngularVelocity"/>, <paramref name="localVelocity"/>, <paramref name="pitchGLimit"/> and <paramref name="gLimit"/>
-    /// </summary>
-    /// <param name="controlinput"></param>
-    /// <param name="maxAngularVelocity"></param>
-    /// <param name="localVelocity"></param>
-    /// <param name="pitchGLimit"></param>
-    /// <param name="gLimit"></param>
-    /// <returns></returns>
     private static float CalculateGLimiter(Vector3 controlinput, Vector3 maxAngularVelocity, Vector3 localVelocity, float pitchGLimit, float gLimit)
     {
         Vector3 limit = Utilities.Secale6(controlinput.normalized,
@@ -150,76 +138,40 @@ public class PhysicsUtils : MonoBehaviour
     }
     #endregion
 
-    #region AirDensity
-    /// <summary>
-    /// //Calculates the air density at <paramref name="altitude"/>
-    /// </summary>
-    /// <param name="altitude"></param>
-    /// <returns></returns>
-    public static float CalculateAirDensity(float altitude)
-    {
-        return 1.225f * Mathf.Pow(1 - (0.0000225577f * altitude), 4.256f);
-    }
-    #endregion
-
-    #region AirPreassure
-    /// <summary>
-    /// Calculates the air preassure at <paramref name="altitude"/>
-    /// </summary>
-    /// <param name="altitude"></param>
-    /// <returns></returns>
-    public static float CalculateAirPreassure(float altitude)
-    {
-        return 101325f * MathF.Exp(-GameManager.gravity * 0.0289644f * altitude / (8.31447f * 288.15f));
-    }
-    #endregion
-
     #region Drag 
-    /// <summary>
-    /// Calculates the drag force using <paramref name="altitude"/>, <paramref name="frontalArea"/> and <paramref name="LocalVelocity"/>
-    /// </summary>
-    /// <param name="altitude"></param>
-    /// <param name="frontalArea"></param>
-    /// <param name="LocalVelocity"></param>
-    /// <returns></returns>
-    public static Vector3 CalculateDragForce(float altitude, float frontalArea, Vector3 LocalVelocity)
+    public static Vector3 CalculateDrag(Vector3 localVelocity, float altitude, AnimationCurve altitudeEffectivenessCurve, AnimationCurve sideDrag, AnimationCurve topDrag, AnimationCurve frontDrag)
     {
-        float currentAirDensity = CalculateAirDensity(altitude);
-        float dragCoefficient = LocalVelocity.magnitude * 0.5f * currentAirDensity;
+        float sideDragCoefficient = sideDrag.Evaluate(Mathf.Abs(localVelocity.x));
+        float topDragCoefficient = topDrag.Evaluate(Mathf.Abs(localVelocity.y));
+        float forwardDragCoefficient = frontDrag.Evaluate(Mathf.Abs(localVelocity.z));
+        
+        Vector3 totalDragCoefficient = Utilities.Secale6(localVelocity.normalized,
+            sideDragCoefficient, sideDragCoefficient,
+            topDragCoefficient, topDragCoefficient,
+            forwardDragCoefficient, forwardDragCoefficient);
 
-        return 0.5f * dragCoefficient * currentAirDensity * frontalArea * LocalVelocity.sqrMagnitude * -LocalVelocity.normalized;
+        Vector3 dragForce = totalDragCoefficient.magnitude * localVelocity.sqrMagnitude * -localVelocity.normalized;
+        return dragForce * altitudeEffectivenessCurve.Evaluate(altitude);
     }
-
-    /* Separate function for solving drag coefficient, not used
-    /// <summary>
-    /// Solves the drag coefficient to match the maximum thrust @ <paramref name="topSpeed"/> speed, taking into accont the <paramref name="airDensity"/> and <paramref name="frontalArea"/>
-    /// </summary>
-    /// <param name="thrust"></param>
-    /// <param name="topSpeed"></param>
-    /// <param name="airDensity"></param>
-    /// <param name="frontalArea"></param>
-    public float SolveDragCoefficient(float thrust, float topSpeed, float airDensity, float frontalArea)
-    {
-        return 2 * (thrust / (airDensity * frontalArea * Mathf.Pow(topSpeed, 2)));
-    }
-    */
     #endregion
 
     #region Lift
     /// <summary>
-    /// Calculate Lift 
+    /// Calculate total lift using <paramref name="localVelocity"/> and <paramref name="aircraftConfig"/>
     /// </summary>
     /// <param name="debugText"></param>
-    /// <param name="liftCurve"></param>
-    /// <param name="inducedDragCurve"></param>
-    /// <param name="rightAxis"></param>
-    /// <param name="airPreasureCoefficient"></param>
     /// <param name="localVelocity"></param>
-    /// <param name="angleOfAttack"></param>
-    /// <param name="liftPower"></param>
-    /// <returns></returns>
+    /// <param name="aircraftConfig"></param>
+    /// <returns>Vector3 Lift</returns>
+    public static Vector3 CalculatelTotalAircraftLift(TextMeshProUGUI debugText, Vector3 localVelocity, float altitude,AircraftConfiguration aircraftConfig)
+    {
+       Vector3 verticalLift = CalculateLift(debugText, aircraftConfig.LiftCurve, aircraftConfig.InducedDragCurve, Vector3.right, localVelocity, CalculateAngleOfAttack(localVelocity), aircraftConfig.LiftPower, aircraftConfig.InducedDragCoefficient);
+       Vector3 rudderLift = CalculateLift(debugText, aircraftConfig.RudderLiftCurve, aircraftConfig.InducedDragCurve, Vector3.up, localVelocity, CalculateAngleOfAttackYaw(localVelocity), aircraftConfig.RudderLiftPower, aircraftConfig.InducedDragCoefficient);
+       return (verticalLift + rudderLift) * aircraftConfig.AltitudeEffectivenessCurve.Evaluate(altitude);
+    }
+
     private static Vector3 CalculateLift(TextMeshProUGUI debugText, AnimationCurve liftCurve, AnimationCurve inducedDragCurve, Vector3 rightAxis,
-       float airPreasureCoefficient, Vector3 localVelocity, float angleOfAttack, float liftPower, float inducedDragCoefficient)
+       Vector3 localVelocity, float angleOfAttack, int liftPower, float inducedDragCoefficient)
     {
         //Project velocity onto plane
         Vector3 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);        
@@ -275,48 +227,5 @@ public class PhysicsUtils : MonoBehaviour
         return lift + inducedDrag; 
     }
 
-    #region Referance
-
-    ////static Vector3 CalculateLift(Vector3 inducedDragCoefficient)
-    ////static Vector3 CalculateLift(Vector3 localVelocity, float angleOfAttack, Vector3 inducedDragCoefficient, Vector3 rightAxis, float liftPower, AnimationCurve aoaCurve, AnimationCurve inducedDragCurve)
-    ////{
-    ////    Vector2 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);    //project velocity onto YZ plane
-    ////    var v2 = liftVelocity.sqrMagnitude;                                     //square of velocity
-    ////                                                                            //lift = velocity^2 * coefficient * liftPower
-    ////                                                                            //coefficient varies with AOA
-    ////    float liftCoefficient = aoaCurve.Evaluate(angleOfAttack * Mathf.Rad2Deg);
-    ////    float liftForce = v2 * liftCoefficient * liftPower;
-
-
-    ////    //lift is perpendicular to velocity
-    ////    Vector3 lift = Vector3.Cross(liftVelocity.normalized, rightAxis) * liftForce;
-
-    ////    //induced drag varies with square of lift coefficient
-    ////    var dragForce = liftCoefficient * liftCoefficient;
-    ////    Vector3 inducedDrag = dragForce * v2 * -liftVelocity.normalized * inducedDragCoefficient * inducedDragCurve.Evaluate(Mathf.Max(0, localVelocity.z));
-    ////    return lift + inducedDrag;
-    ////}
-    #endregion
-
-    /// <summary>
-    /// Calculate total lift
-    /// </summary>
-    /// <param name="debugText"></param>
-    /// <param name="localVelocity"></param>
-    /// <param name="aOACurve"></param>
-    /// <param name="inducedDragCurve"></param>
-    /// <param name="airPreasureCoefficient"></param>
-    /// <param name="liftPower"></param>
-    /// <param name="rudderAOACurve"></param>
-    /// <param name="rudderLiftPower"></param>
-    /// <returns></returns>
-    public static Vector3 CalculatelTotalLift(TextMeshProUGUI debugText, Vector3 localVelocity, AnimationCurve aOACurve, AnimationCurve inducedDragCurve, 
-       float airPreasureCoefficient, float liftPower, AnimationCurve rudderAOACurve, float rudderLiftPower, float inducedDragCoefficient)
-    {
-       Vector3 verticalLift = CalculateLift(debugText, aOACurve, inducedDragCurve, Vector3.right, airPreasureCoefficient, localVelocity, CalculateAngleOfAttack(localVelocity), liftPower, inducedDragCoefficient);
-       Vector3 rudderLift = CalculateLift(debugText, rudderAOACurve, inducedDragCurve, Vector3.up, airPreasureCoefficient, localVelocity, CalculateAngleOfAttackYaw(localVelocity), rudderLiftPower, inducedDragCoefficient);
-
-       return verticalLift + rudderLift;
-    }
     #endregion
 }

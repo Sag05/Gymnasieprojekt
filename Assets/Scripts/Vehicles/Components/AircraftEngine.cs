@@ -62,6 +62,9 @@ namespace Assets.Scripts.Vehicles.Components
 
         public float Thrust { get; private set; }
 
+        public AnimationCurve ThrustCoefficientCurve { get; set; }
+        public float Altitude { get; set; }
+
         public bool Tick()
         {
             this.TurbineRPM -=
@@ -74,7 +77,7 @@ namespace Assets.Scripts.Vehicles.Components
 
             //thrust is the thrustfactor times the maximum thrust
             //Debug.Log(MaxThrust);
-            this.Thrust = this.TurbineThrustFactor * this.maxThrust;
+            this.Thrust = this.TurbineThrustFactor * this.ThrustCoefficientCurve.Evaluate(Altitude) * this.maxThrust;
             return true;
         }
 

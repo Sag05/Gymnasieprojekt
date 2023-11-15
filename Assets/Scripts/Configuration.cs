@@ -153,8 +153,15 @@ namespace Assets.Scripts
                         case "FINISHANIMATIONCURVE":
                             CurrentConfigurationContext = StoredConfigurationContext;
                             //Add animationcurve to configuration
-
-                            ApplyAnimationCurve(ref aircraftConfiguration, animationCurveName, keyframes);
+                            switch (CurrentConfigurationContext)
+                            {
+                                case CONFIGCONTEXT.AIRCRAFTCONFIG:
+                                    ApplyAnimationCurve(ref aircraftConfiguration, animationCurveName, keyframes);
+                                    break;
+                                case CONFIGCONTEXT.COMPONENTCONFIG:
+                                    ApplyAnimationCurve(ref ComponentObject, animationCurveName, keyframes);
+                                    break;
+                            }
                             //Reset animationcurve variable
                             keyframes.Clear();
                             break;
