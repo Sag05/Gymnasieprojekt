@@ -14,7 +14,7 @@ namespace Assets.Scripts
     {
         private enum CONFIGCONTEXT { NONE, AIRCRAFTCONFIG, COMPONENTCONFIG, ANIMATIONCURVE }
 
-        public static AircraftConfiguration LoadAircraft(string configName, VehicleBase caller)
+        public static AircraftConfiguration LoadAircraft(string configPath, VehicleBase caller)
         {
             CultureInfo culture = CultureInfo.GetCultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentCulture = culture;
@@ -106,7 +106,7 @@ namespace Assets.Scripts
             //Type ComponentType = null;
 
             object aircraftConfiguration = new AircraftConfiguration();
-            using (StreamReader r = new StreamReader(configName))
+            using (StreamReader r = new StreamReader(configPath))
             {
                 List<string[]> statements = r.ReadToEnd().Replace("\n", "").Replace("\r", "").Split(';').Where(e => !e.StartsWith('#')).Select(e => e.Split(' ')).ToList();
 

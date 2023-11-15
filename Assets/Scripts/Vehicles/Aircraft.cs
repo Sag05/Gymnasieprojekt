@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEditor;
 
 public class Aircraft : VehicleBase
 {
@@ -16,16 +17,14 @@ public class Aircraft : VehicleBase
     Vector3 controlInput = new Vector3();
 
     bool emulateInput = false;
-    Vector3 emulatedInput = new Vector3();
     Slider pitchSlider;
     Slider rollSlider;
     Slider yawSlider;
 
-    string vehicleName = "F5";
-    public TextMeshProUGUI DebugText;
+    TextMeshProUGUI DebugText;
 
-    public GameObject model;
-    public Animation gearAnimation;
+    GameObject model;
+    Animation gearAnimation;
 
     #region Input
     public void OnMovement(InputValue value)
@@ -53,8 +52,17 @@ public class Aircraft : VehicleBase
     }
     #endregion  
 
+    private void LoadModel(){
+        //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
+        model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
+    }
+
     new void Start()
     {
+        this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+        LoadModel();
+        
+
         pitchSlider = Utilities.GetSlider("PitchSlider");
         rollSlider = Utilities.GetSlider("RollSlider");
         yawSlider = Utilities.GetSlider("YawSlider");
@@ -63,7 +71,6 @@ public class Aircraft : VehicleBase
         rollSlider.gameObject.SetActive(false);
         yawSlider.gameObject.SetActive(false);
 
-        this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\" + vehicleName + ".cfg", this);
 
         base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
 

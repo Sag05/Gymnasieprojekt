@@ -7,6 +7,7 @@ namespace Assets.Scripts.Vehicles
 {
     public class VehicleConfigurationBase
     {
+        public string ModelName { get; set; }
         public IList<ComponentBase> VehicleComponents { get; set; } = new List<ComponentBase>();
         public int Mass { get; set; }
     }
