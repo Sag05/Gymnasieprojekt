@@ -13,108 +13,129 @@ namespace Assets.Scripts
     internal class Configuration
     {
         private enum CONFIGCONTEXT { NONE, AIRCRAFTCONFIG, COMPONENTCONFIG, ANIMATIONCURVE }
+        private static bool ApplyFieldToObject(ref object obj, string fieldName, string statementValue)
+        {
+            FieldInfo objectFieldInfo = null;
+            PropertyInfo objectPropInfo = null;
+            Type objectType = obj.GetType();
+            while (objectFieldInfo is null && objectType is not null && objectPropInfo is null)
+            {
+                objectFieldInfo = objectType.GetRuntimeField(fieldName);//, BindingFlags.Instance);
+                objectPropInfo = objectType.GetRuntimeProperty(fieldName);
+                objectType = objectType.BaseType;
+            }
 
+            //Check if value exists
+            if (objectType is null && objectFieldInfo is null && objectPropInfo is null)
+            {
+                Debug.LogError("Field [" + statementValue + "] does not exist");
+                return false;
+            }
+
+            if (objectFieldInfo is not null)
+            {
+                Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nField type: " + objectFieldInfo.FieldType);
+                if (objectFieldInfo.FieldType == typeof(string))
+                    objectFieldInfo.SetValue(obj, statementValue);
+                else if (objectFieldInfo.FieldType == typeof(int))
+                    objectFieldInfo.SetValue(obj, int.Parse(statementValue));
+                else if (objectFieldInfo.FieldType == typeof(float))
+                    objectFieldInfo.SetValue(obj, float.Parse(statementValue));
+                else if (objectFieldInfo.FieldType == typeof(double))
+                    objectFieldInfo.SetValue(obj, double.Parse(statementValue));
+                else if (objectFieldInfo.FieldType == typeof(bool))
+                    objectFieldInfo.SetValue(obj, bool.Parse(statementValue));
+                else if (objectFieldInfo.FieldType == typeof(Vector3))
+                    objectFieldInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
+                else if (objectFieldInfo.FieldType == typeof(List<>))
+                    objectFieldInfo.SetValue(obj, statementValue.Split(',').ToList());
+                else if (objectPropInfo.PropertyType.IsEnum)
+                {
+                    int enumFlags = 0;
+                    // Enum is flag type; Holds multiple values
+                    if (objectPropInfo.PropertyType.GetCustomAttribute<FlagsAttribute>() is not null)
+                    {
+
+                        foreach (string enumFlag in statementValue.Split("|"))
+                        {
+                            enumFlags |= (int)Enum.Parse(objectPropInfo.PropertyType, enumFlag);
+                        }
+                    }
+                    else
+                    {
+                        enumFlags = (int)Enum.Parse(objectPropInfo.PropertyType, statementValue);
+                    }
+                    objectPropInfo.SetValue(obj, enumFlags);
+                }
+            }
+            else
+            {
+                Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nProperty type: " + objectPropInfo.PropertyType);
+                if (objectPropInfo.PropertyType == typeof(string))
+                    objectPropInfo.SetValue(obj, statementValue);
+                else if (objectPropInfo.PropertyType == typeof(int))
+                    objectPropInfo.SetValue(obj, int.Parse(statementValue));
+                else if (objectPropInfo.PropertyType == typeof(float))
+                    objectPropInfo.SetValue(obj, float.Parse(statementValue));
+                else if (objectPropInfo.PropertyType == typeof(double))
+                    objectPropInfo.SetValue(obj, double.Parse(statementValue));
+                else if (objectPropInfo.PropertyType == typeof(bool))
+                    objectPropInfo.SetValue(obj, bool.Parse(statementValue));
+                else if (objectPropInfo.PropertyType == typeof(Vector3))
+                    objectPropInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
+                else if (objectPropInfo.PropertyType == typeof(List<>))
+                    objectPropInfo.SetValue(obj, statementValue.Split(',').ToList());
+                else if (objectPropInfo.PropertyType.IsEnum)
+                {
+                    int enumFlags = 0;
+                    // Enum is flag type; Holds multiple values
+                    if (objectPropInfo.PropertyType.GetCustomAttribute<FlagsAttribute>() is not null)
+                    {
+
+                        foreach(string enumFlag in  statementValue.Split("|"))
+                        {
+                            enumFlags |= (int)Enum.Parse(objectPropInfo.PropertyType, enumFlag);
+                        }
+                    }
+                    else
+                    {
+                        enumFlags = (int)Enum.Parse(objectPropInfo.PropertyType, statementValue);
+                    }
+                    objectPropInfo.SetValue(obj, enumFlags);
+                }
+
+                /*
+                else if (objectPropInfo.PropertyType == typeof(OrdinanceType))
+                {
+                    OrdinanceType ordinanceTypes = 0;
+                    foreach (string OrdinanceType in statementValue.Split(','))
+                    {
+                        ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), OrdinanceType, false);
+                    }
+                    objectPropInfo.SetValue(obj, ordinanceTypes);
+                }
+                else if (objectPropInfo.PropertyType == typeof(GuidanceType))
+                {
+                    GuidanceType guidanceTypes = 0;
+                    foreach (string guidanceType in statementValue.Split(','))
+                    {
+                        guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
+                    }
+                    objectPropInfo.SetValue(obj, guidanceTypes);
+                }
+                */
+            }
+
+            Debug.Log("APPLIED [" + fieldName + "] = [" + statementValue + "]");
+            return true;
+        }
         public static AircraftConfiguration LoadAircraft(string configPath, VehicleBase caller)
         {
             CultureInfo culture = CultureInfo.GetCultureInfo("en-US");
             CultureInfo.DefaultThreadCurrentCulture = culture;
             CultureInfo.DefaultThreadCurrentUICulture = culture;
 
-            bool ApplyFieldToObject(ref object obj, string fieldName, string statementValue)
-            {
-                FieldInfo objectFieldInfo = null;
-                PropertyInfo objectPropInfo = null;
-                Type objectType = obj.GetType();
-                while (objectFieldInfo is null && objectType is not null && objectPropInfo is null)
-                {
-                    objectFieldInfo = objectType.GetRuntimeField(fieldName);//, BindingFlags.Instance);
-                    objectPropInfo = objectType.GetRuntimeProperty(fieldName);
-                    objectType = objectType.BaseType;
-                }
 
-                //Check if value exists
-                if (objectType is null && objectFieldInfo is null && objectPropInfo is null)
-                {
-                    Debug.LogError("Field [" + statementValue + "] does not exist");
-                    return false;
-                }
-
-                if (objectFieldInfo is not null)
-                {
-                    Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nField type: " + objectFieldInfo.FieldType);
-                    if (objectFieldInfo.FieldType == typeof(string))
-                        objectFieldInfo.SetValue(obj, statementValue);
-                    else if (objectFieldInfo.FieldType == typeof(int))
-                        objectFieldInfo.SetValue(obj, int.Parse(statementValue));
-                    else if (objectFieldInfo.FieldType == typeof(float))
-                        objectFieldInfo.SetValue(obj, float.Parse(statementValue));
-                    else if (objectFieldInfo.FieldType == typeof(double))
-                        objectFieldInfo.SetValue(obj, double.Parse(statementValue));
-                    else if (objectFieldInfo.FieldType == typeof(bool))
-                        objectFieldInfo.SetValue(obj, bool.Parse(statementValue));
-                    else if (objectFieldInfo.FieldType == typeof(Vector3))
-                        objectFieldInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
-                    else if (objectFieldInfo.FieldType == typeof(List<>))
-                        objectFieldInfo.SetValue(obj, statementValue.Split(',').ToList());
-                    else if (objectFieldInfo.FieldType == typeof(OrdinanceType))
-                    {
-                        OrdinanceType ordinanceTypes = 0;
-                        foreach (string ordinanceType in statementValue.Split(','))
-                        {
-                            ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), ordinanceType, false);
-                        }
-                        objectFieldInfo.SetValue(obj, ordinanceTypes);
-                    }
-                    else if (objectFieldInfo.FieldType == typeof(GuidanceType))
-                    {
-                        GuidanceType guidanceTypes = 0;
-                        foreach (string guidanceType in statementValue.Split(','))
-                        {
-                            guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
-                        }
-                        objectFieldInfo.SetValue(obj, guidanceTypes);
-                    }
-                }
-                else
-                {
-                    Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nProperty type: " + objectPropInfo.PropertyType);
-                    if (objectPropInfo.PropertyType == typeof(string))
-                        objectPropInfo.SetValue(obj, statementValue);
-                    else if (objectPropInfo.PropertyType == typeof(int))
-                        objectPropInfo.SetValue(obj, int.Parse(statementValue));
-                    else if (objectPropInfo.PropertyType == typeof(float))
-                        objectPropInfo.SetValue(obj, float.Parse(statementValue));
-                    else if (objectPropInfo.PropertyType == typeof(double))
-                        objectPropInfo.SetValue(obj, double.Parse(statementValue));
-                    else if (objectPropInfo.PropertyType == typeof(bool))
-                        objectPropInfo.SetValue(obj, bool.Parse(statementValue));
-                    else if (objectPropInfo.PropertyType == typeof(Vector3))
-                        objectPropInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
-                    else if (objectPropInfo.PropertyType == typeof(List<>))
-                        objectPropInfo.SetValue(obj, statementValue.Split(',').ToList());
-                    else if (objectPropInfo.PropertyType == typeof(OrdinanceType))
-                    {
-                        OrdinanceType ordinanceTypes = 0;
-                        foreach (string OrdinanceType in statementValue.Split(','))
-                        {
-                            ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), OrdinanceType, false);
-                        }
-                        objectPropInfo.SetValue(obj, ordinanceTypes);
-                    }
-                    else if (objectPropInfo.PropertyType == typeof(GuidanceType))
-                    {
-                        GuidanceType guidanceTypes = 0;
-                        foreach (string guidanceType in statementValue.Split(','))
-                        {
-                            guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
-                        }
-                        objectPropInfo.SetValue(obj, guidanceTypes);
-                    }
-                }
-
-                Debug.Log("APPLIED [" + fieldName + "] = [" + statementValue + "]");
-                return true;
-            }
 
             bool ApplyAnimationCurve(ref object obj, string curveName, List<Keyframe> keyframes)
             {

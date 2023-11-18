@@ -44,7 +44,6 @@ namespace Assets.Scripts
         All = None | ActiveRadar | Infrared | Laser | TV | GPS | INS | AntiRadiation
     }
 
-
     internal class Utilities : MonoBehaviour
     {
         //https://github.com/vazgriz/FlightSim/blob/main/Assets/Scripts/Utilities.cs#L13
