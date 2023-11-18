@@ -8,7 +8,7 @@ namespace Assets.Scripts.Vehicles.Components
 {
     public interface ITickableComponent
     {
-        public bool PreTickComponent();
-        public bool PostTickComponent();
+        public virtual bool PreTickComponent() => true;
+        public virtual bool PostTickComponent() => true;
     }
 }

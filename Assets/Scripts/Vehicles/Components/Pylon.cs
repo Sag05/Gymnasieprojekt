@@ -13,7 +13,7 @@ namespace Assets.Scripts.Vehicles.Components
             
         }
         public string PylonName { get; set; }
-        public List<OrdinanceType> AcceptedOrdinanceTypes { get; set; }
-        public List<GuidanceType> AcceptedGuidanceTypes { get; set; }
+        public OrdinanceType AcceptedOrdinanceTypes { get; set; } //OrdinanceType is now a flag, the list part can be removed
+        public GuidanceType AcceptedGuidanceTypes { get; set; } //GuidanceType is now a flag, the list part can be removed
     }
 }

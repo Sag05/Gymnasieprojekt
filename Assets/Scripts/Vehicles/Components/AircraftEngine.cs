@@ -6,7 +6,7 @@ namespace Assets.Scripts.Vehicles.Components
     public class AircraftEngine : ComponentBase, ITickableComponent
     {
         public AircraftEngine(VehicleBase vehicle) : base(vehicle) { }
-
+        #region Variables
         /// <summary>
         /// The maximum RPM of the turbine, measured in RPM
         /// </summary>
@@ -64,7 +64,7 @@ namespace Assets.Scripts.Vehicles.Components
 
         public AnimationCurve ThrustCoefficientCurve { get; set; }
         public float Altitude { get; set; }
-
+        #endregion
         public bool Tick()
         {
             this.TurbineRPM -=

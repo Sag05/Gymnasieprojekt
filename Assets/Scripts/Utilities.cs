@@ -1,14 +1,22 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Assets.Scripts.Vehicles.Components;
 
 namespace Assets.Scripts
 {
+    /// <summary>
+    /// Represents 2 vectors in one
+    /// </summary>
     public struct DoubleVector3{
-        public Vector3 vector1;
-        public Vector3 vector2;
+        public Vector3 vector1 { get; set; }
+        public Vector3 vector2 { get; set; }
     }
-
+    /// <summary>
+    /// A set of flags for a pylon for what ordinance it may carry for a <see cref="BaseWeaponHardpoint"/>
+    /// </summary>
+    [Flags]
     public enum OrdinanceType
     {
         AirToAirMissile,
@@ -19,7 +27,7 @@ namespace Assets.Scripts
         Pod,
         FuelTank
     }
-
+    [Flags]
     public enum GuidanceType
     {
         None,
@@ -40,7 +48,8 @@ namespace Assets.Scripts
             Vector3 value,
             float xPositive, float xNegative,
             float yPositive, float yNegative,
-            float zPositive, float zNegative)
+            float zPositive, float zNegative
+            )
         {
             Vector3 result = value;
 

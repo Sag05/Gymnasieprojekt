@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Assets.Scripts.Vehicles.Components
 {
     /// <summary>
-    /// The base class for weapon hardpoints. Use <b><see cref="WeaponHardpoint" langword=""/></b> or <b><see cref="StaticWeaponHardpoint"/></b> to utilize this
+    /// The base class for weapon hardpoints. Use <b><see cref="WeaponHardpoint"/></b> or <b><see cref="StaticWeaponHardpoint"/></b> to utilize this
     /// </summary>
     public abstract class BaseWeaponHardpoint : ComponentBase, ITickableComponent
     {
