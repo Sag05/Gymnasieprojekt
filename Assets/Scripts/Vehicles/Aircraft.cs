@@ -7,9 +7,11 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Aircraft : VehicleBase
 {
+    #region Variables
     private float throttleInput;
 
     private DoubleVector3 steering = new DoubleVector3();
@@ -26,6 +28,7 @@ public class Aircraft : VehicleBase
 
     public GameObject model;
     Animation gearAnimation;
+    #endregion
 
     #region Input
     public void OnMovement(InputValue value)
@@ -65,7 +68,7 @@ public class Aircraft : VehicleBase
     new void Start()
     {
         this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
-        base.VehicleComponents = this.AircraftConfiguration.VehicleComponents;
+        base.VehicleComponents.AddComponents(this.AircraftConfiguration.VehicleComponents.ToArray());
         LoadModel();
         
         DebugText = Utilities.GetText("DebugText");
@@ -79,7 +82,7 @@ public class Aircraft : VehicleBase
 
 
 
-        foreach (ComponentBase component in base.VehicleComponents)
+        foreach (ComponentBase component in base.VehicleComponents.Components)
         {
             if (component is AircraftEngine)
             {
@@ -94,7 +97,12 @@ public class Aircraft : VehicleBase
 
     void Update()
     {
+        #region Debug code
+        // == DEBUGGING CONTEXT == //
+        // All debugging content should be between this area
         DebugText.text = "";
+        // == END OF DEUBBING CONTEXT == //
+        #endregion
         if (emulateInput)
         {
             this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
@@ -118,7 +126,7 @@ public class Aircraft : VehicleBase
         float totalThrust = 0;
         float additionalDrag = 0;
         //Go through all components
-        foreach (ComponentBase component in this.VehicleComponents)
+        foreach (ComponentBase component in this.VehicleComponents.Components)
         {
             // Ticks any tickable components in the pre-phase
             if (component is ITickableComponent)

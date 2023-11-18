@@ -33,7 +33,8 @@ namespace Assets.Scripts.Vehicles.Components
         public float RadarAltitude { private get; set; }
         public float GForce { private get; set; }
 
-        public bool PostTick()
+        public bool PreTickComponent() => true;
+        public bool PostTickComponent()
         {
             //Set speed text, display in km/h
             this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
@@ -41,18 +42,17 @@ namespace Assets.Scripts.Vehicles.Components
             this.machText.text = (this.Velocity.magnitude / 340.29f / GameManager.scaleFactor).ToString("0.00") + "M";
 
             //Set altitude text. if radar altitude is less than 200(2000m), use that instead
-            if(this.RadarAltitude < 200 && this.RadarAltitude > 0)
+            if (this.RadarAltitude < 200 && this.RadarAltitude > 0)
             {
                 this.altitudeText.text = (this.RadarAltitude / GameManager.scaleFactor).ToString("0");
                 this.radarAltitudeIndicator.enabled = true;
-            } else
+            }
+            else
             {
                 this.altitudeText.text = (this.Altitude / GameManager.scaleFactor).ToString("0");
                 this.radarAltitudeIndicator.enabled = false;
             }
-             return true;
+            return true;
         }
-        public bool PreTickComponent() => true;
-        public bool PostTickComponent() => this.PostTick();
     }
 }

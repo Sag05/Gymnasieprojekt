@@ -5,11 +5,23 @@ using Assets.Scripts.Vehicles.Components;
 
 namespace Assets.Scripts.Vehicles
 {
+    /// <summary>
+    /// The base class for representing all types vehicle configurations
+    /// </summary>
     public class VehicleConfigurationBase
     {
+        /// <summary>
+        /// The name of the model
+        /// </summary>
         public string ModelName { get; set; }
+        /// <summary>
+        /// Represents base components, you'll have to forward them into the <see cref="ComponentManager"/> of your <see cref="VehicleBase"/> or derived class
+        /// </summary>
         public IList<ComponentBase> VehicleComponents { get; set; } = new List<ComponentBase>();
-        public int Mass { get; set; }
+        /// <summary>
+        /// The vehicle's mass, in kg
+        /// </summary>
+        public int Mass { get; set; } //[Venom] Considering making this a float?
     }
 
     [Serializable]

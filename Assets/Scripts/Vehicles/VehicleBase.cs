@@ -11,13 +11,13 @@ namespace Assets.Scripts.Vehicles
     {
         public VehicleBase() : base()
         {
-            this.VehicleComponents = new List<ComponentBase>();
+            this.VehicleComponents = new ComponentManager(this);
         }
         #region Variables
-        public float Throttle{ get; set; }
+        public float Throttle { get; set; }
 
         //public VehicleConfigurationBase VehicleConfiguration { get; set; }
-        public IList<ComponentBase> VehicleComponents { get; set; }
+        public ComponentManager VehicleComponents { get; set; }
 
         public Rigidbody VehicleBody { get; set; }
 
@@ -49,8 +49,7 @@ namespace Assets.Scripts.Vehicles
         }   
 
         public void UpdateRadarAltitude(){
-            RaycastHit hit;
-            Physics.Raycast(this.transform.position, Vector3.down, out hit, 1000, LayerMask.GetMask("Terrain"));
+            Physics.Raycast(this.transform.position, Vector3.down, out RaycastHit hit, 1000, LayerMask.GetMask("Terrain"));
             this.RadarAltitude = hit.distance;
         }
 
