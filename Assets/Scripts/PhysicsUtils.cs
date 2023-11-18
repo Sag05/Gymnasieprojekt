@@ -59,8 +59,12 @@ public class PhysicsUtils : MonoBehaviour
         result.vector1 = correction * Mathf.Deg2Rad;
 
         #region Debug
-        debugText.text += "Turn Speed: " + config.TurnSpeed.ToString("0.0") + 
-            "\nSteeringPower: " + steeringPower.ToString("0.0") + "\nGForceScale: " + gForceScale.ToString("0.0");
+        
+        debugText.text += "\nTarget Angular Velocity = Control Input * G-Force scale * Steering Power * Turn Speed:\n" + 
+        targetAngularVelocity.ToString("0.0") + " = " + controlInput.ToString("0.0") + ", " + gForceScale.ToString("0.0") + " * " + steeringPower.ToString("0.0") + " * " + config.TurnSpeed.ToString("0.0");
+        
+        //debugText.text += "Turn Speed: " + config.TurnSpeed.ToString("0.0") + 
+        //    "\nSteeringPower: " + steeringPower.ToString("0.0") + "\nGForceScale: " + gForceScale.ToString("0.0");
         /*
         debugText.text = "Correction: " + correction.ToString() + 
             "\nGForceScale: " + gForceScale.ToString() + 
@@ -105,7 +109,11 @@ public class PhysicsUtils : MonoBehaviour
             gLimit, gLimit);
         Vector3 maxGForce = CalculateLocalGForce(Vector3.Scale(controlinput.normalized, maxAngularVelocity), localVelocity);
 
-        debugText.text += "MaxGForce: " + maxGForce.magnitude.ToString("0.0") + "\nLimit: " + limit.magnitude.ToString("0.0") + "\n";
+        #region Debug
+        //debugText.text += "MaxGForce: " + maxGForce.magnitude.ToString("0.0") + "\nLimit: " + limit.magnitude.ToString("0.0") + 
+        //"\nForce larger than limit: " + (maxGForce.magnitude > limit.magnitude).ToString() + "\nReturn: " + (limit.magnitude / maxGForce.magnitude).ToString("0.0") + "\n";
+        #endregion 
+        
         if(maxGForce.magnitude > limit.magnitude)
         {
             return limit.magnitude / maxGForce.magnitude;

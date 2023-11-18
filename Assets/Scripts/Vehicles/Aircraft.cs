@@ -64,7 +64,7 @@ public class Aircraft : VehicleBase
         //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
         //model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Aircraft/" + AircraftConfiguration.ModelName), transform);
         model = GameObject.Find(AircraftConfiguration.ModelName);
-
+        model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
 
         gearAnimation = model.AddComponent<Animation>();
     }
@@ -113,7 +113,7 @@ public class Aircraft : VehicleBase
         {
             this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
         }
-        inputToApply += controlInput;
+        inputToApply = controlInput;
     }
 
     void FixedUpdate()

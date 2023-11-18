@@ -78,6 +78,15 @@ namespace Assets.Scripts
             return result;
         }
 
+        /// <summary>
+        /// Returns a <see cref="Vector3"/> with all values set to the given input
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static Vector3 FloatToVector3(float input){
+            return new Vector3(input, input, input);
+        }
+
     	/// <summary>
         /// Returns a <see cref="Slider"/> with the given name, for use in classes that do not inherit from <see cref="MonoBehaviour"/>
         /// </summary>
