@@ -19,25 +19,29 @@ namespace Assets.Scripts
     [Flags]
     public enum OrdinanceType
     {
-        AirToAirMissile,
-        AirToGroundMissile,
-        Bomb,
-        Rocket,
-        Gun,
-        Pod,
-        FuelTank
+        AirToAirMissile = 1,
+        AirToGroundMissile = 2,
+        Bomb = 4,
+        Rocket = 8,
+        Gun = 16,
+        Pod = 32,
+        FuelTank = 64,
+        
+        All = AirToAirMissile | AirToGroundMissile | Bomb | Rocket | Gun | Pod | FuelTank
     }
     [Flags]
     public enum GuidanceType
     {
-        None,
-        ActiveRadar,
-        Infrared,
-        Laser,
-        TV,
-        GPS,
-        INS,
-        AntiRadiation
+        None = 1,
+        ActiveRadar = 2,
+        Infrared = 4,
+        Laser = 8,
+        TV = 16,
+        GPS = 32,
+        INS = 64,
+        AntiRadiation = 128,
+
+        All = None | ActiveRadar | Infrared | Laser | TV | GPS | INS | AntiRadiation
     }
 
 
@@ -74,11 +78,20 @@ namespace Assets.Scripts
             return result;
         }
 
+    	/// <summary>
+        /// Returns a <see cref="Slider"/> with the given name, for use in classes that do not inherit from <see cref="MonoBehaviour"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static Slider GetSlider(string name)
         {
             return GameObject.Find(name).GetComponent<Slider>();
         }
-
+        /// <summary>
+        /// Returns a <see cref="TextMeshProUGUI"/> with the given name, for use in classes that do not inherit from <see cref="MonoBehaviour"/>
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static TextMeshProUGUI GetText(string name)
         {
             return GameObject.Find(name).GetComponent<TextMeshProUGUI>();

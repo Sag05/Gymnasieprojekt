@@ -84,13 +84,14 @@ public class Aircraft : VehicleBase
         rollSlider.gameObject.SetActive(false);
         yawSlider.gameObject.SetActive(false);
 
-
-
         foreach (ComponentBase component in base.VehicleComponents.Components)
         {
-            if (component is AircraftEngine)
+            if(component is Pylon pylon)
             {
-                AircraftEngine engine = (AircraftEngine)component;
+                Debug.Log(pylon.GetPylonInfo());
+            }
+            if (component is AircraftEngine engine)
+            {
                 engine.EngineEnabled = true;
             }
         }
@@ -104,9 +105,10 @@ public class Aircraft : VehicleBase
         #region Debug code
         // == DEBUGGING CONTEXT == //
         // All debugging content should be between this area
-        DebugText.text = "";
+        //DebugText.text = "";
         // == END OF DEUBBING CONTEXT == //
         #endregion
+
         if (emulateInput)
         {
             this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
@@ -116,13 +118,16 @@ public class Aircraft : VehicleBase
 
     void FixedUpdate()
     {
+        //Run pre-update on base
         base.PreUpdate();
 
         //Set throttle
         this.Throttle = Mathf.Clamp(this.Throttle + this.throttleInput, 0f, 100f);
-        //Reset thrust
+        
+        //Reset thrust and additional drag
         float totalThrust = 0;
         float additionalDrag = 0;
+
         //Go through all components
         foreach (ComponentBase component in this.VehicleComponents.Components)
         {
@@ -174,7 +179,6 @@ public class Aircraft : VehicleBase
 
         //Apply steering
         base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
-        Debug.Log("Applied steering: " + steering.vector1);
 
         #region Debug
         #region DrawVectors
@@ -190,6 +194,7 @@ public class Aircraft : VehicleBase
         Debug.DrawRay(base.transform.position, base.VehicleBody.velocity / 1000, Color.white);
         #endregion
         #region Logs
+        //Debug.Log("Applied steering: " + steering.vector1);
         //DebugText.text = "Thrust: " + totalThrust;
 
         //Debug.Log("Lift: " + lift);
@@ -233,9 +238,9 @@ public class Aircraft : VehicleBase
         #endregion
 
         //Reset input
-
         inputToApply = Vector3.zero;        
-        //Run post update on base
+        
+        //Run post-update on base
         base.PostUpdate();
     }
 

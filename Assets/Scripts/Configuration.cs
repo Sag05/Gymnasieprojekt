@@ -41,6 +41,7 @@ namespace Assets.Scripts
 
                 if (objectFieldInfo is not null)
                 {
+                    Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nField type: " + objectFieldInfo.FieldType);
                     if (objectFieldInfo.FieldType == typeof(string))
                         objectFieldInfo.SetValue(obj, statementValue);
                     else if (objectFieldInfo.FieldType == typeof(int))
@@ -55,10 +56,28 @@ namespace Assets.Scripts
                         objectFieldInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
                     else if (objectFieldInfo.FieldType == typeof(List<>))
                         objectFieldInfo.SetValue(obj, statementValue.Split(',').ToList());
+                    else if (objectFieldInfo.FieldType == typeof(OrdinanceType))
+                    {
+                        OrdinanceType ordinanceTypes = 0;
+                        foreach (string ordinanceType in statementValue.Split(','))
+                        {
+                            ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), ordinanceType, false);
+                        }
+                        objectFieldInfo.SetValue(obj, ordinanceTypes);
+                    }
+                    else if (objectFieldInfo.FieldType == typeof(GuidanceType))
+                    {
+                        GuidanceType guidanceTypes = 0;
+                        foreach (string guidanceType in statementValue.Split(','))
+                        {
+                            guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
+                        }
+                        objectFieldInfo.SetValue(obj, guidanceTypes);
+                    }
                 }
                 else
                 {
-                    Debug.Log("ObjectPropInfo: " + objectPropInfo.Name + " " + objectPropInfo.PropertyType + "\nStatementValue: " + statementValue);
+                    Debug.Log("Trying to apply [" + fieldName + "] = [" + statementValue + "]\nProperty type: " + objectPropInfo.PropertyType);
                     if (objectPropInfo.PropertyType == typeof(string))
                         objectPropInfo.SetValue(obj, statementValue);
                     else if (objectPropInfo.PropertyType == typeof(int))
@@ -73,12 +92,29 @@ namespace Assets.Scripts
                         objectPropInfo.SetValue(obj, new Vector3(float.Parse(statementValue.Split(',')[0]), float.Parse(statementValue.Split(',')[1]), float.Parse(statementValue.Split(',')[2])));
                     else if (objectPropInfo.PropertyType == typeof(List<>))
                         objectPropInfo.SetValue(obj, statementValue.Split(',').ToList());
+                    else if (objectPropInfo.PropertyType == typeof(OrdinanceType))
+                    {
+                        OrdinanceType ordinanceTypes = 0;
+                        foreach (string OrdinanceType in statementValue.Split(','))
+                        {
+                            ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), OrdinanceType, false);
+                        }
+                        objectPropInfo.SetValue(obj, ordinanceTypes);
+                    }
+                    else if (objectPropInfo.PropertyType == typeof(GuidanceType))
+                    {
+                        GuidanceType guidanceTypes = 0;
+                        foreach (string guidanceType in statementValue.Split(','))
+                        {
+                            guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
+                        }
+                        objectPropInfo.SetValue(obj, guidanceTypes);
+                    }
                 }
 
                 Debug.Log("APPLIED [" + fieldName + "] = [" + statementValue + "]");
                 return true;
             }
-
 
             bool ApplyAnimationCurve(ref object obj, string curveName, List<Keyframe> keyframes)
             {

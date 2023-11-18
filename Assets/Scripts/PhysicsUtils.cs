@@ -49,7 +49,7 @@ public class PhysicsUtils : MonoBehaviour
 
         float gForceScale = CalculateGLimiter(controlInput, Mathf.Deg2Rad * steeringPower * config.TurnSpeed, localVelocity, config.PitchGLimit, config.GLimit, debugText);
 
-        Vector3 targetAngularVelocity = Vector3.Scale(controlInput, config.TurnSpeed * steeringPower * gForceScale);
+        Vector3 targetAngularVelocity = Vector3.Scale(controlInput, gForceScale * steeringPower * config.TurnSpeed);
         Vector3 angularVelocity = localAngularVelocity * Mathf.Rad2Deg;
 
         Vector3 correction = new(
@@ -110,9 +110,6 @@ public class PhysicsUtils : MonoBehaviour
         {
             return limit.magnitude / maxGForce.magnitude;
         }
-
-
-
         return 1f;
     }
     #endregion
