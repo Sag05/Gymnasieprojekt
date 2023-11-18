@@ -13,10 +13,14 @@ public class PhysicsUtils : MonoBehaviour
     */
 
     #region AircaftSteering
-    private static float CalculateAircraftSteering(float angularVelocity, float targetVelocity, float acceleration)
+    private static float CalculateAircraftSteering(float angularVelocity, float targetVelocity, float acceleration, TextMeshProUGUI debugText)
     {
         float error = targetVelocity - angularVelocity;
         float deltaAcceleration = acceleration * Time.fixedDeltaTime;
+
+        //debugText.text += "Error: " + error.ToString() + "\nTargetVelocity: " + targetVelocity.ToString() + "\nAngularVelocity: " + angularVelocity.ToString() + "\n";
+        //debugText.text += "Error: " + error.ToString() + "\nDeltaAcceleration: " + deltaAcceleration.ToString() + "\n";
+
         return Mathf.Clamp(error, -deltaAcceleration, deltaAcceleration);
     }
 
@@ -38,33 +42,40 @@ public class PhysicsUtils : MonoBehaviour
     public static DoubleVector3 AircraftSteering(Vector3 localVelocity, Vector3 localAngularVelocity, Vector3 controlInput,
         AircraftConfiguration config, TextMeshProUGUI debugText)
     {
+        debugText.text = "";
         DoubleVector3 result = new DoubleVector3();
         float speed = Mathf.Max(0, localVelocity.z);
         float steeringPower = config.SteeringCurve.Evaluate(speed);
 
-        float gForceScale = CalculateGLimiter(controlInput, Mathf.Deg2Rad * steeringPower * config.TurnSpeed, localVelocity, config.PitchGLimit, config.GLimit);
+        float gForceScale = CalculateGLimiter(controlInput, Mathf.Deg2Rad * steeringPower * config.TurnSpeed, localVelocity, config.PitchGLimit, config.GLimit, debugText);
 
-        debugText.text += "Turn Speed: " + config.TurnSpeed.ToString("0.0") + 
-            "\nSteeringPower: " + steeringPower.ToString("0.0") + "\nGforecScale: " + gForceScale.ToString("0.0");
         Vector3 targetAngularVelocity = Vector3.Scale(controlInput, config.TurnSpeed * steeringPower * gForceScale);
         Vector3 angularVelocity = localAngularVelocity * Mathf.Rad2Deg;
 
         Vector3 correction = new(
-            CalculateAircraftSteering(angularVelocity.x, targetAngularVelocity.x, config.TurnAcceleration.x * steeringPower),
-            CalculateAircraftSteering(angularVelocity.y, targetAngularVelocity.y, config.TurnAcceleration.y * steeringPower),
-            CalculateAircraftSteering(angularVelocity.z, targetAngularVelocity.z, config.TurnAcceleration.z * steeringPower));
+            CalculateAircraftSteering(angularVelocity.x, targetAngularVelocity.x, config.TurnAcceleration.x * steeringPower, debugText),
+            CalculateAircraftSteering(angularVelocity.y, targetAngularVelocity.y, config.TurnAcceleration.y * steeringPower, debugText),
+            CalculateAircraftSteering(angularVelocity.z, targetAngularVelocity.z, config.TurnAcceleration.z * steeringPower, debugText));
         result.vector1 = correction * Mathf.Deg2Rad;
 
-
-
-        /* Debug 
-        Debug.Log("Correction: " + correction.ToString("0.0") + 
-            "\nGForceScale: " + gForceScale.ToString("0.0") + 
-            "\nSteeringPower: " + steeringPower.ToString("0.0" + 
-            "\nSpeed: " + speed.ToString("0.0") + "\nInput: " + controlInput.ToString("0.0") +
-            "\nOutput: " + result.vector1.ToString("0.0")));
+        #region Debug
+        debugText.text += "Turn Speed: " + config.TurnSpeed.ToString("0.0") + 
+            "\nSteeringPower: " + steeringPower.ToString("0.0") + "\nGForceScale: " + gForceScale.ToString("0.0");
+        /*
+        debugText.text = "Correction: " + correction.ToString() + 
+            "\nGForceScale: " + gForceScale.ToString() + 
+            "\nSteeringPower: " + steeringPower.ToString() + 
+            "\nSpeed: " + speed.ToString() + "\nInput: " + controlInput.ToString() +
+            "\nOutput: " + result.vector1.ToString();
         */
-
+        /*
+        Debug.Log("Correction: " + correction.ToString() + 
+            "\nGForceScale: " + gForceScale.ToString() + 
+            "\nSteeringPower: " + steeringPower.ToString() + 
+            "\nSpeed: " + speed.ToString() + "\nInput: " + controlInput.ToString() +
+            "\nOutput: " + result.vector1.ToString());
+        */
+        #endregion
         //Effective input, used for animations
         #region EffectiveInput
 
@@ -86,7 +97,7 @@ public class PhysicsUtils : MonoBehaviour
         return result;
     }
 
-    private static float CalculateGLimiter(Vector3 controlinput, Vector3 maxAngularVelocity, Vector3 localVelocity, float pitchGLimit, float gLimit)
+    private static float CalculateGLimiter(Vector3 controlinput, Vector3 maxAngularVelocity, Vector3 localVelocity, float pitchGLimit, float gLimit, TextMeshProUGUI debugText)
     {
         Vector3 limit = Utilities.Secale6(controlinput.normalized,
             gLimit, pitchGLimit,
@@ -94,10 +105,14 @@ public class PhysicsUtils : MonoBehaviour
             gLimit, gLimit);
         Vector3 maxGForce = CalculateLocalGForce(Vector3.Scale(controlinput.normalized, maxAngularVelocity), localVelocity);
 
+        debugText.text += "MaxGForce: " + maxGForce.magnitude.ToString("0.0") + "\nLimit: " + limit.magnitude.ToString("0.0") + "\n";
         if(maxGForce.magnitude > limit.magnitude)
         {
             return limit.magnitude / maxGForce.magnitude;
         }
+
+
+
         return 1f;
     }
     #endregion

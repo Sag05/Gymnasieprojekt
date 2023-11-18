@@ -23,12 +23,16 @@ public class Aircraft : VehicleBase
     Slider pitchSlider;
     Slider rollSlider;
     Slider yawSlider;
+    Vector3 inputToApply;
+
 
     TextMeshProUGUI DebugText;
 
     public GameObject model;
     Animation gearAnimation;
     #endregion
+
+
 
     #region Input
     public void OnMovement(InputValue value)
@@ -107,13 +111,7 @@ public class Aircraft : VehicleBase
         {
             this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
         }
-        steering = PhysicsUtils.AircraftSteering(
-            base.LocalVelocity, base.LocalAngularVelocity, this.controlInput,
-            this.AircraftConfiguration, this.DebugText);
-
-        DebugText.text += "\nInput: " + this.controlInput.ToString("0.0") + "\nTurnSpeed: " + AircraftConfiguration.TurnSpeed.ToString("0.0");
-        //Apply steering
-        base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
+        inputToApply += controlInput;
     }
 
     void FixedUpdate()
@@ -134,17 +132,15 @@ public class Aircraft : VehicleBase
                 ((ITickableComponent)component).PreTickComponent();
             }
             // Componenents should have their values get/set in this area
-            if (component is AircraftEngine)
+            if (component is AircraftEngine engine)
             {
-                AircraftEngine engine = (AircraftEngine)component;
                 engine.Altitude = base.Altitude;
                 engine.TargetRPMFactor = Throttle / 100f;
                 //Apply thrust
                 totalThrust += engine.Thrust;
             }
-            else if (component is HelmetMountedDisplay)
+            else if (component is HelmetMountedDisplay hmd)
             {
-                HelmetMountedDisplay hmd = (HelmetMountedDisplay)component;
                 hmd.GForce = PhysicsUtils.CalculateLocalGForce(base.LocalAngularVelocity, base.LocalVelocity).y;
                 hmd.Velocity = base.Velocity;
                 hmd.Altitude = base.Altitude;
@@ -162,29 +158,26 @@ public class Aircraft : VehicleBase
         Vector3 drag = PhysicsUtils.CalculateDrag(base.LocalVelocity, base.Altitude, AircraftConfiguration.AltitudeEffectivenessCurve,
             this.AircraftConfiguration.SideDragCurve, this.AircraftConfiguration.TopDragCurve, this.AircraftConfiguration.FrontDragCurve, additionalDrag);
 
-        /*Old
-        Vector3 drag = PhysicsUtils.CalculateDragForce(
-            base.Altitude, this.AircraftConfiguration.FrontalArea, 
-            base.LocalVelocity);
-        */
-
         //Lift
         Vector3 lift = PhysicsUtils.CalculatelTotalAircraftLift(this.DebugText, base.LocalVelocity, base.Altitude, this.AircraftConfiguration);
 
-
-        /*Vector3 lift = PhysicsUtils.CalculateLift(this.DebugText, base.LocalVelocity, base.Velocity, transform, base.Altitude, 
-            this.AircraftConfiguration.WingSpan, this.AircraftConfiguration.WingArea, 
-            this.AircraftConfiguration.liftPower, this.AircraftConfiguration.AltitudeEffectivenessCurve);*/
-
+        
+        //Calculate Steering
+        steering = PhysicsUtils.AircraftSteering(
+            base.LocalVelocity, base.LocalAngularVelocity, this.inputToApply,
+            this.AircraftConfiguration, this.DebugText);
+        
+        
         //Apply forces
         this.VehicleBody.AddRelativeForce(lift + drag);
         this.VehicleBody.AddRelativeForce(Vector3.forward * totalThrust);
 
+        //Apply steering
+        base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
+        Debug.Log("Applied steering: " + steering.vector1);
+
         #region Debug
         #region DrawVectors
-        //Forward
-        //Debug.DrawRay(base.transform.position, transform.forward * 10, Color.yellow);
-
         //Lift
         Debug.DrawRay(base.transform.position, transform.rotation * lift / 1000, Color.green);
         //Drag
@@ -197,8 +190,9 @@ public class Aircraft : VehicleBase
         Debug.DrawRay(base.transform.position, base.VehicleBody.velocity / 1000, Color.white);
         #endregion
         #region Logs
-        //Debug.Log("Lift: " + lift);
+        //DebugText.text = "Thrust: " + totalThrust;
 
+        //Debug.Log("Lift: " + lift);
 
         /*
         DebugText.text += 
@@ -238,6 +232,9 @@ public class Aircraft : VehicleBase
 
         #endregion
 
+        //Reset input
+
+        inputToApply = Vector3.zero;        
         //Run post update on base
         base.PostUpdate();
     }
