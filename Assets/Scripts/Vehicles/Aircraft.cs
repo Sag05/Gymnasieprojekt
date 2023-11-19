@@ -13,6 +13,11 @@ public class Aircraft : VehicleBase
 
     Animation gearAnimation;
     #endregion
+    
+    public void SwitchSOI()
+    {
+        base.VehicleComponents.LoopSOI();
+    }    
 
     private void LoadModel(){
         //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
@@ -34,7 +39,6 @@ public class Aircraft : VehicleBase
         base.ControllerCameraPosition.transform.localPosition = this.AircraftConfiguration.CameraPosition;
         Controller.transform.SetParent(base.ControllerCameraPosition.transform);
         Controller.transform.localPosition = Vector3.zero;
-
 
 
         LoadModel();

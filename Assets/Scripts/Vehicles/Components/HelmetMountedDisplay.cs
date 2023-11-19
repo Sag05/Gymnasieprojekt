@@ -17,7 +17,6 @@ namespace Assets.Scripts.Vehicles.Components
             gForceText = GameObject.Find("gForceText").GetComponent<TextMeshProUGUI>();
             machText = GameObject.Find("machText").GetComponent<TextMeshProUGUI>();
             
-            
             //set color 
             speedText.color = Color.green;
             altitudeText.color = Color.green;
@@ -25,6 +24,7 @@ namespace Assets.Scripts.Vehicles.Components
             gForceText.color = Color.green;
             machText.color = Color.green;
         }
+
         //HMD elements
         private GameObject HMDCanvasPrefab;
         private GameObject HMDCanvas;

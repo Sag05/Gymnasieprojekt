@@ -40,6 +40,11 @@ namespace Assets.Scripts.Vehicles.Components
                 c.ParentVehicle = this.RootVehicle;
             this.Components.AddRange(components);
         }
+
+        List<MultiFunctionDisplay> displayList;
+        MultiFunctionDisplay currentDisplay;
+
+
         /// <summary>
         /// Returns the first component in the list with the given type
         /// </summary>
@@ -49,15 +54,58 @@ namespace Assets.Scripts.Vehicles.Components
         {
             return this.Components.FirstOrDefault(x => x.GetType() == typeof(T));
         }
+
+
         /// <summary>
         /// Returns all components in the list with the given type
         /// </summary>
         /// <typeparam name="T">Component type to search for</typeparam>
         /// <returns></returns>
-
         public ComponentBase[] GetComponentsOfType<T>()
         {
             return (from c in this.Components where c.GetType() == typeof(T) select c).ToArray();
         }
+
+        /// <summary>
+        /// Loop through current selected sensor of interest
+        /// </summary>
+        public void LoopSOI()
+        { 
+            int currentDisplayNumber = 0;
+            int i = 0;
+            foreach (MultiFunctionDisplay display in GetComponentsOfType<MultiFunctionDisplay>())
+            {
+                if (display.IsSensorOfInterest)
+                {
+                    currentDisplayNumber = i;
+                    display.IsSensorOfInterest = false;
+                }
+                
+                if (currentDisplayNumber == i++)
+                {
+                    display.IsSensorOfInterest = true;
+                    currentDisplay = display;
+                }
+                i++;
+            }
+        }
+
+        /// <summary>
+        /// Set current sensor of interest to the given MultifunctionDisplay <paramref name="MFD"/>
+        /// </summary>
+        /// <param name="MFD"></param>
+        public void SetCurrentSensorOfInterest(MultiFunctionDisplay MFD){
+            //Set all MFDs as not soi
+            foreach (MultiFunctionDisplay display in GetComponentsOfType<MultiFunctionDisplay>())
+            {
+                if (display.IsSensorOfInterest)
+                {
+                    display.IsSensorOfInterest = false;
+                }
+            }
+            //Set given sensor as soi
+            MFD.IsSensorOfInterest = true;            
+        }
+
     }
 }

@@ -29,13 +29,31 @@ public class PlayerController : MonoBehaviour
     {
         DebugText.enabled = !DebugText.enabled;
     }
+
+    public void OnSwitchSOI()
+    {
+        switch (controlledVehicleType)
+        {
+            case VehicleType.Aircraft:
+                controlledVehicle.GetComponent<Aircraft>().SwitchSOI();
+                break;
+            case VehicleType.Helicopter:
+                
+                break;
+            case VehicleType.GroundVehicle:
+                
+                break;
+        }
+    }
     #endregion
 
-    public void SelectVehicle(GameObject aircraft){
+    public void SelectVehicle(GameObject aircraft)
+    {
         Debug.Log("Trying to select vehicle " + aircraft.name);
         controlledVehicle = aircraft; //GameObject.Find(vehicleName);
         Debug.Log("Found vehicle " + controlledVehicle.name);
-        if (controlledVehicle.GetComponent<Aircraft>() != null){
+        if (controlledVehicle.GetComponent<Aircraft>() != null)
+        {
             Debug.Log("Found aircraft component on " + controlledVehicle.name);
             controlledVehicleType = VehicleType.Aircraft;
             controlledVehicle.GetComponent<Aircraft>().Controller = this;
