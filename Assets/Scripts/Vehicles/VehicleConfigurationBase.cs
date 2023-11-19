@@ -21,7 +21,8 @@ namespace Assets.Scripts.Vehicles
         /// <summary>
         /// The vehicle's mass, in kg
         /// </summary>
-        public float Mass { get; set; } //[Venom] Considering making this a float?
+        public float Mass { get => mass; set { if (value <= 0) throw new ArgumentOutOfRangeException("Mass", value, "Mass can not be less than or equal to 0"); this.mass = value * GameManager.scaleFactor;}} 
+        private float mass;
         public Vector3 CameraPosition { get; set; }
 
     }

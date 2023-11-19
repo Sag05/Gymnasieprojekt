@@ -20,6 +20,13 @@ namespace Assets.Scripts
         GroundVehicle
     }
 
+    public enum PodType{
+        ECM,
+        Countermeasure,
+        TargetingPod,
+        FuelTank
+    }
+
     /// <summary>
     /// A set of flags for a pylon for what ordinance it may carry for a <see cref="BaseWeaponHardpoint"/>
     /// </summary>

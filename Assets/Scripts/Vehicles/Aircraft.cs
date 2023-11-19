@@ -3,7 +3,6 @@ using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using UnityEngine;
 using System.Linq;
-using System.Security.Cryptography;
 
 public class Aircraft : VehicleBase
 {
@@ -26,7 +25,7 @@ public class Aircraft : VehicleBase
 
     new void Start()
     {
-        this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+        this.AircraftConfiguration = ConfigurationReader.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
         base.VehicleComponents.AddComponents(this.AircraftConfiguration.VehicleComponents.ToArray());
 
         base.Start();
@@ -52,7 +51,7 @@ public class Aircraft : VehicleBase
             }
         }
 
-        this.VehicleBody.mass = this.AircraftConfiguration.Mass * GameManager.scaleFactor;
+        this.VehicleBody.mass = this.AircraftConfiguration.Mass;
     }
 
     void Update()
