@@ -1,88 +1,44 @@
 using Assets.Scripts;
 using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.InputSystem;
-using UnityEditor;
-using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 
 public class Aircraft : VehicleBase
 {
     #region Variables
-    private float throttleInput;
-
-    private DoubleVector3 steering = new DoubleVector3();
-
     private AircraftConfiguration AircraftConfiguration;
-    Vector3 controlInput = new Vector3();
+    private DoubleVector3 steering = new DoubleVector3();
+    public float Throttle { get; set; }
 
-    bool emulateInput = false;
-    Slider pitchSlider;
-    Slider rollSlider;
-    Slider yawSlider;
-    Vector3 inputToApply;
-
-
-    TextMeshProUGUI DebugText;
-
-    public GameObject model;
     Animation gearAnimation;
     #endregion
-
-
-
-    #region Input
-    public void OnMovement(InputValue value)
-    {
-        controlInput = value.Get<Vector3>();
-        DebugText.text = controlInput.ToString("0.0");
-    }
-
-    public void OnThrottle(InputValue value)
-    {
-        throttleInput = value.Get<float>();
-    }
-
-    public void OnDebug()
-    {
-        DebugText.enabled = !DebugText.enabled;
-    }
-
-    public void OnDebug1()
-    {
-        emulateInput = !emulateInput;
-        pitchSlider.gameObject.SetActive(!pitchSlider.gameObject.activeSelf);
-        rollSlider.gameObject.SetActive(!rollSlider.gameObject.activeSelf);
-        yawSlider.gameObject.SetActive(!yawSlider.gameObject.activeSelf);
-    }
-    #endregion  
 
     private void LoadModel(){
         //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
         //model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Aircraft/" + AircraftConfiguration.ModelName), transform);
-        model = GameObject.Find(AircraftConfiguration.ModelName);
-        model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
-
-        gearAnimation = model.AddComponent<Animation>();
+        base.Model = GameObject.Find(AircraftConfiguration.ModelName);
+        base.Model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
+        
+        gearAnimation = base.Model.AddComponent<Animation>();
     }
 
     new void Start()
     {
         this.AircraftConfiguration = Configuration.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
         base.VehicleComponents.AddComponents(this.AircraftConfiguration.VehicleComponents.ToArray());
-        LoadModel();
-        
-        DebugText = Utilities.GetText("DebugText");
-        pitchSlider = Utilities.GetSlider("PitchSlider");
-        rollSlider = Utilities.GetSlider("RollSlider");
-        yawSlider = Utilities.GetSlider("YawSlider");
 
-        pitchSlider.gameObject.SetActive(false);
-        rollSlider.gameObject.SetActive(false);
-        yawSlider.gameObject.SetActive(false);
+        base.Start();
+
+        Debug.Log("Setting camera position to " + this.AircraftConfiguration.CameraPosition + " for " + base.ControllerCameraPosition);
+        base.ControllerCameraPosition.transform.localPosition = this.AircraftConfiguration.CameraPosition;
+        Controller.transform.SetParent(base.ControllerCameraPosition.transform);
+        Controller.transform.localPosition = Vector3.zero;
+
+
+
+        LoadModel();
 
         foreach (ComponentBase component in base.VehicleComponents.Components)
         {
@@ -90,13 +46,12 @@ public class Aircraft : VehicleBase
             {
                 Debug.Log(pylon.GetPylonInfo());
             }
-            if (component is AircraftEngine engine)
+            else if (component is AircraftEngine engine)
             {
                 engine.EngineEnabled = true;
             }
         }
 
-        base.Start();
         this.VehicleBody.mass = this.AircraftConfiguration.Mass * GameManager.scaleFactor;
     }
 
@@ -105,15 +60,9 @@ public class Aircraft : VehicleBase
         #region Debug code
         // == DEBUGGING CONTEXT == //
         // All debugging content should be between this area
-        //DebugText.text = "";
+        //Controller.DebugText.text = "";
         // == END OF DEUBBING CONTEXT == //
         #endregion
-
-        if (emulateInput)
-        {
-            this.controlInput = new Vector3(pitchSlider.value, yawSlider.value, rollSlider.value);
-        }
-        inputToApply = controlInput;
     }
 
     void FixedUpdate()
@@ -122,7 +71,7 @@ public class Aircraft : VehicleBase
         base.PreUpdate();
 
         //Set throttle
-        this.Throttle = Mathf.Clamp(this.Throttle + this.throttleInput, 0f, 100f);
+        this.Throttle = Mathf.Clamp(this.Throttle + base.Controller.ThrottleInput, 0f, 100f);
         
         //Reset thrust and additional drag
         float totalThrust = 0;
@@ -132,9 +81,9 @@ public class Aircraft : VehicleBase
         foreach (ComponentBase component in this.VehicleComponents.Components)
         {
             // Ticks any tickable components in the pre-phase
-            if (component is ITickableComponent)
+            if (component is ITickableComponent tickableComponent)
             {
-                ((ITickableComponent)component).PreTickComponent();
+                tickableComponent.PreTickComponent();
             }
             // Componenents should have their values get/set in this area
             if (component is AircraftEngine engine)
@@ -152,9 +101,9 @@ public class Aircraft : VehicleBase
                 hmd.RadarAltitude = base.RadarAltitude;
             }
             // Ticks any tickable components in the post-phase
-            if (component is ITickableComponent)
+            if (component is ITickableComponent tickableComponent1)
             {
-                ((ITickableComponent)component).PostTickComponent();
+                tickableComponent1.PostTickComponent();
             }
         }
 
@@ -164,13 +113,13 @@ public class Aircraft : VehicleBase
             this.AircraftConfiguration.SideDragCurve, this.AircraftConfiguration.TopDragCurve, this.AircraftConfiguration.FrontDragCurve, additionalDrag);
 
         //Lift
-        Vector3 lift = PhysicsUtils.CalculatelTotalAircraftLift(this.DebugText, base.LocalVelocity, base.Altitude, this.AircraftConfiguration);
+        Vector3 lift = PhysicsUtils.CalculatelTotalAircraftLift(this.Controller.DebugText, base.LocalVelocity, base.Altitude, this.AircraftConfiguration);
 
         
         //Calculate Steering
         steering = PhysicsUtils.AircraftSteering(
-            base.LocalVelocity, base.LocalAngularVelocity, this.inputToApply,
-            this.AircraftConfiguration, this.DebugText);
+            base.LocalVelocity, base.LocalAngularVelocity, base.Controller.ControlInput,
+            this.AircraftConfiguration, this.Controller.DebugText);
         
         
         //Apply forces
@@ -195,12 +144,12 @@ public class Aircraft : VehicleBase
         #endregion
         #region Logs
         //Debug.Log("Applied steering: " + steering.vector1);
-        //DebugText.text = "Thrust: " + totalThrust;
+        //Controller.DebugText.text = "Thrust: " + totalThrust;
 
         //Debug.Log("Lift: " + lift);
 
         /*
-        DebugText.text += 
+        Controller.DebugText.text += 
             "Drag: " + (transform.rotation * drag).ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
             "N\nLift: " + (transform.rotation * lift).ToString("0.0") + "N + T: " + lift.magnitude.ToString("0.0") +
             "N\nGravity: " + (base.VehicleBody.mass * 9.81f).ToString("0.0") + 
@@ -237,9 +186,6 @@ public class Aircraft : VehicleBase
 
         #endregion
 
-        //Reset input
-        inputToApply = Vector3.zero;        
-        
         //Run post-update on base
         base.PostUpdate();
     }

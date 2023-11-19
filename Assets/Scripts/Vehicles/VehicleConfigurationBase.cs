@@ -21,7 +21,9 @@ namespace Assets.Scripts.Vehicles
         /// <summary>
         /// The vehicle's mass, in kg
         /// </summary>
-        public int Mass { get; set; } //[Venom] Considering making this a float?
+        public float Mass { get; set; } //[Venom] Considering making this a float?
+        public Vector3 CameraPosition { get; set; }
+
     }
 
     [Serializable]

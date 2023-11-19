@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Vehicles.Components;
+﻿
+using Assets.Scripts.Vehicles.Components;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -14,11 +15,16 @@ namespace Assets.Scripts.Vehicles
             this.VehicleComponents = new ComponentManager(this);
         }
         #region Variables
-        public float Throttle { get; set; }
-
-        //public VehicleConfigurationBase VehicleConfiguration { get; set; }
+        /// <summary>
+        /// Current controller of the vehicle
+        /// </summary>
+        public PlayerController Controller { get; set; }
+        /// <summary>
+        /// The position of the camera of the controller
+        /// </summary>
+        public GameObject ControllerCameraPosition { get; private set; }
+        public GameObject Model { get; set; }
         public ComponentManager VehicleComponents { get; set; }
-
         public Rigidbody VehicleBody { get; set; }
 
         //Velocity
@@ -57,6 +63,9 @@ namespace Assets.Scripts.Vehicles
         {
             //Set last velocity to zero since we just started and otherwise it will be null and give errors
             this.LastVelocity = Vector3.zero;
+
+            this.ControllerCameraPosition = Utilities.GetChild(this.gameObject, "CameraPosition");
+            //Set Rigidbody
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
                 this.VehicleBody = this.gameObject.GetComponent<Rigidbody>();

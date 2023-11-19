@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Assets.Scripts;
 using UnityEngine;
 
 public class FreeTrackClientDll64 : MonoBehaviour
@@ -31,10 +32,10 @@ public class FreeTrackClientDll64 : MonoBehaviour
 
     FreeTrackClientDll64.FreeTrackData FreeTrackDataRef;
 
-    public Vector3 rotation;
-    public Vector3 position;
-    public bool tracking;
-    int storedId;
+    private Vector3 rotation;
+    private Vector3 position;
+    public bool IsTracking { get; private set; }
+    private int storedId;
 
     void Start()
     {
@@ -47,6 +48,24 @@ public class FreeTrackClientDll64 : MonoBehaviour
 
         storedId = FreeTrackDataRef.dataid;
     }
+    
+    /// <summary>
+    /// Returns the tracking data from FreeTrack, in the form of a <see cref="DoubleVector3"/>, where vector1 is rotation and vector2 is position.
+    /// </summary>
+    /// <returns></returns>
+    public DoubleVector3 GetTrackingData()
+    {
+        //Pitch = x, Yaw = y, Roll = z
+        rotation = new Vector3(FreeTrackDataRef.Pitch, FreeTrackDataRef.Yaw, FreeTrackDataRef.Roll);
+        rotation *= Mathf.Rad2Deg;
+        position = new Vector3(FreeTrackDataRef.X, FreeTrackDataRef.Y, FreeTrackDataRef.Z);
+        DoubleVector3 output = new()
+        {
+            vector1 = rotation,
+            vector2 = position
+        };
+        return output;
+    }
 
     void Update()
     {
@@ -54,20 +73,14 @@ public class FreeTrackClientDll64 : MonoBehaviour
         if (FreeTrackDataRef.dataid == storedId)
         { 
             //Debug.Log("Tracking disabled");
-            tracking = false;
+            IsTracking = false;
         }
         else
         {
-            tracking = true;
+            IsTracking = true;
         }
 
         FreeTrackClientDll64.FTGetData(ref FreeTrackDataRef);
-
-        //Pitch = x, Yaw = y, Roll = z
-        rotation = new Vector3(FreeTrackDataRef.Pitch, FreeTrackDataRef.Yaw, FreeTrackDataRef.Roll);
-        rotation *= Mathf.Rad2Deg;
-        position = new Vector3(FreeTrackDataRef.X, FreeTrackDataRef.Y, FreeTrackDataRef.Z);
-
         storedId = FreeTrackDataRef.dataid;
     }
 }

@@ -13,6 +13,13 @@ namespace Assets.Scripts
         public Vector3 vector1 { get; set; }
         public Vector3 vector2 { get; set; }
     }
+
+    public enum VehicleType{
+        Aircraft,
+        Helicopter,
+        GroundVehicle
+    }
+
     /// <summary>
     /// A set of flags for a pylon for what ordinance it may carry for a <see cref="BaseWeaponHardpoint"/>
     /// </summary>
@@ -76,6 +83,25 @@ namespace Assets.Scripts
 
             return result;
         }
+
+
+        /// <summary>
+        /// Gets a child of <paramref name="parent"/> by <paramref name="name"/> 
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static GameObject GetChild(GameObject parent, string name)
+        {
+            foreach (Transform child in parent.transform)
+            {
+                if (child.name == name)
+                {
+                    return child.gameObject;
+                }
+            }
+            return null;
+        }   
 
         /// <summary>
         /// Returns a <see cref="Vector3"/> with all values set to the given input
