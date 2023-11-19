@@ -1,4 +1,5 @@
 ﻿using TMPro;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Vehicles.Components
@@ -7,11 +8,15 @@ namespace Assets.Scripts.Vehicles.Components
     {
         public HelmetMountedDisplay(VehicleBase vehicle) : base(vehicle) 
         {
+            HMDCanvasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/HMDCanvas.prefab");
+            HMDCanvas = GameObject.Instantiate(HMDCanvasPrefab); 
+            
             speedText = GameObject.Find("speedText").GetComponent<TextMeshProUGUI>();
             altitudeText = GameObject.Find("altitudeText").GetComponent<TextMeshProUGUI>();
             radarAltitudeIndicator = GameObject.Find("radarAltitudeIndicator").GetComponent<TextMeshProUGUI>();
             gForceText = GameObject.Find("gForceText").GetComponent<TextMeshProUGUI>();
             machText = GameObject.Find("machText").GetComponent<TextMeshProUGUI>();
+            
             
             //set color 
             speedText.color = Color.green;
@@ -21,6 +26,8 @@ namespace Assets.Scripts.Vehicles.Components
             machText.color = Color.green;
         }
         //HMD elements
+        private GameObject HMDCanvasPrefab;
+        private GameObject HMDCanvas;
         private TextMeshProUGUI speedText;
         private TextMeshProUGUI altitudeText;
         private TextMeshProUGUI radarAltitudeIndicator;
