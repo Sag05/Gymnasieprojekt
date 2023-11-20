@@ -73,10 +73,12 @@ namespace Assets.Scripts.Vehicles.Components
                 // Turbine power (acceleration)
             this.TurbineRPM +=
                 (this.TurbineAcceleration * this.currentTargetRPMFactor * (this.EngineEnabled ? 1 : 0));
-            //Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor + "\n" + "T-AX" + this.currentTargetRPMFactor);
 
-            //thrust is the thrustfactor times the maximum thrust
+            #region Debug
+            //Debug.Log("T-RPM:" + this.TurbineRPM + "\n" + "T-TAR:" + this.TargetRPMFactor + "\n" + "T-AX" + this.currentTargetRPMFactor);
             //Debug.Log(MaxThrust);
+            #endregion
+            
             this.Thrust = this.TurbineThrustFactor * this.ThrustCoefficientCurve.Evaluate(Altitude) * this.maxThrust;
             return true;
         }

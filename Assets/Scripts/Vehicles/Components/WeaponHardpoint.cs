@@ -33,7 +33,7 @@ namespace Assets.Scripts.Vehicles.Components
     /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{WeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
     /// 
-    /// <para>This type is for dynamic hardpoints that can be removed, for static weapons that can <b>not</b> be removed. Use <see cref="StaticWeaponHardpoint"/>.</para>
+    /// <para>This type is for dynamic hardpoints that <b>can</b> be removed, for static weapons that <b>can not</b> be removed use <see cref="StaticWeaponHardpoint"/>.</para>
     /// </summary>
     public sealed class WeaponHardpoint : BaseWeaponHardpoint
     {
@@ -42,11 +42,11 @@ namespace Assets.Scripts.Vehicles.Components
         }
     }
     /// <summary>
-    /// Class for weapon hardpoints.
+    /// Class for static weapon hardpoints.
     /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
     /// 
-    /// <para>This type is for static hardpoints that can be removed, for dynamic weapons that <b>can</b> be removed use <see cref="WeaponHardpoint"/>.</para>
+    /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="WeaponHardpoint"/>.</para>
     /// </summary>
     public sealed class StaticWeaponHardpoint : BaseWeaponHardpoint
     {

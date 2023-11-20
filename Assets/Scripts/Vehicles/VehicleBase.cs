@@ -14,6 +14,7 @@ namespace Assets.Scripts.Vehicles
         {
             this.VehicleComponents = new ComponentManager(this);
         }
+        
         #region Variables
         /// <summary>
         /// Current controller of the vehicle
@@ -41,7 +42,7 @@ namespace Assets.Scripts.Vehicles
         public float RadarAltitude { get; private set; }
         
         //Rotation
-        public Quaternion InverseRotation {get => Quaternion.Inverse(this.VehicleBody.rotation);}
+        public Quaternion InverseRotation { get => Quaternion.Inverse(this.VehicleBody.rotation); }
         #endregion
 
         public void PreUpdate()
@@ -64,7 +65,7 @@ namespace Assets.Scripts.Vehicles
             //Set last velocity to zero since we just started and otherwise it will be null and give errors
             this.LastVelocity = Vector3.zero;
 
-            this.ControllerCameraPosition = Utilities.GetChild(this.gameObject, "CameraPosition");
+            this.ControllerCameraPosition = Utilities.GetChildOf(this.gameObject, "CameraPosition");
             //Set Rigidbody
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {

@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             controlledVehicle.GetComponent<Aircraft>().Controller = this;
             Debug.Log(this.name + " is now controlling " + controlledVehicle.name);
         }
-
+        Debug.Log("Updating controls");
         UpdateControls();
     }
 
@@ -92,8 +92,10 @@ public class PlayerController : MonoBehaviour
         {
             case VehicleType.Aircraft:
                 PlayerInput.all[0].SwitchCurrentActionMap("Aircraft");
+                Debug.Log("Set Controls to 'Aircraft'");
                 break;
             default:
+                Debug.LogWarning("VehicleType " + controlledVehicleType + " has no controls assigned.");
                 break;
         }
     }   

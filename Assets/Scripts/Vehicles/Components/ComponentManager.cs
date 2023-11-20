@@ -41,7 +41,6 @@ namespace Assets.Scripts.Vehicles.Components
             this.Components.AddRange(components);
         }
 
-        List<MultiFunctionDisplay> displayList;
         MultiFunctionDisplay currentDisplay;
 
 
@@ -50,9 +49,9 @@ namespace Assets.Scripts.Vehicles.Components
         /// </summary>
         /// <typeparam name="T">Component type to search for</typeparam>
         /// <returns></returns>
-        public ComponentBase GetComponentOfType<T>()
+        public T GetComponentOfType<T>() where T : ComponentBase
         {
-            return this.Components.FirstOrDefault(x => x.GetType() == typeof(T));
+            return (T) this.Components.FirstOrDefault(x => x.GetType() == typeof(T));
         }
 
 
@@ -61,9 +60,9 @@ namespace Assets.Scripts.Vehicles.Components
         /// </summary>
         /// <typeparam name="T">Component type to search for</typeparam>
         /// <returns></returns>
-        public ComponentBase[] GetComponentsOfType<T>()
+        public T[] GetComponentsOfType<T>() where T : ComponentBase
         {
-            return (from c in this.Components where c.GetType() == typeof(T) select c).ToArray();
+            return (T[]) (from c in this.Components where c.GetType() == typeof(T) select c).ToArray();
         }
 
         /// <summary>

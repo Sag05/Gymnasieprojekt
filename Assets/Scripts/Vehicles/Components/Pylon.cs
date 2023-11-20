@@ -7,6 +7,7 @@ namespace Assets.Scripts.Vehicles.Components
     {
         public Pylon(VehicleBase vehicle) : base(vehicle)
         {
+
         }
         public string GetPylonInfo()
         {
@@ -62,6 +63,17 @@ namespace Assets.Scripts.Vehicles.Components
         private float maxAcceptedMass;
         public OrdinanceType AcceptedOrdinanceTypes { get; set; }
         public GuidanceType AcceptedGuidanceTypes { get; set; } 
+        public OrdinanceBase CurrentOrdinance { get; set; }
         public WeaponHardpoint Hardpoint { get; set; }
+
+        void UpdateOrdinance()
+        {
+            if (this.CurrentOrdinance is not null)
+            {
+                this.CurrentOrdinance.transform.SetParent(this.PylonObject.transform);
+                this.CurrentOrdinance.transform.localPosition = Vector3.zero;
+                this.CurrentOrdinance.transform.localRotation = Quaternion.identity;
+            }
+        }
     }
 }

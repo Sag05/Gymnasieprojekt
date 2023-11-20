@@ -40,7 +40,6 @@ public class Aircraft : VehicleBase
         Controller.transform.SetParent(base.ControllerCameraPosition.transform);
         Controller.transform.localPosition = Vector3.zero;
 
-
         LoadModel();
 
         foreach (ComponentBase component in base.VehicleComponents.Components)
@@ -52,6 +51,10 @@ public class Aircraft : VehicleBase
             else if (component is AircraftEngine engine)
             {
                 engine.EngineEnabled = true;
+            }
+            else if (component is SuspensionManager suspensionManager)
+            {
+                suspensionManager.Start();
             }
         }
 

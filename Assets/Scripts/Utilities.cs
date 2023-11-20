@@ -9,18 +9,21 @@ namespace Assets.Scripts
     /// <summary>
     /// Represents 2 vectors in one
     /// </summary>
-    public struct DoubleVector3{
+    public struct DoubleVector3
+    {
         public Vector3 vector1 { get; set; }
         public Vector3 vector2 { get; set; }
     }
 
-    public enum VehicleType{
+    public enum VehicleType
+    {
         Aircraft,
         Helicopter,
         GroundVehicle
     }
 
-    public enum PodType{
+    public enum PodType
+    {
         ECM,
         Countermeasure,
         TargetingPod,
@@ -40,7 +43,7 @@ namespace Assets.Scripts
         Gun = 16,
         Pod = 32,
         FuelTank = 64,
-        
+
         All = AirToAirMissile | AirToGroundMissile | Bomb | Rocket | Gun | Pod | FuelTank
     }
     [Flags]
@@ -70,21 +73,30 @@ namespace Assets.Scripts
         {
             Vector3 result = value;
 
-            if(result.x > 0){
+            if (result.x > 0)
+            {
                 result.x *= xPositive;
-            } else {
+            }
+            else
+            {
                 result.x *= xNegative;
             }
 
-            if (result.y > 0){
+            if (result.y > 0)
+            {
                 result.y *= yPositive;
-            } else {
+            }
+            else
+            {
                 result.y *= yNegative;
             }
 
-            if (result.z > 0) {
+            if (result.z > 0)
+            {
                 result.z *= zPositive;
-            } else {
+            }
+            else
+            {
                 result.z *= zNegative;
             }
 
@@ -98,7 +110,7 @@ namespace Assets.Scripts
         /// <param name="parent"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static GameObject GetChild(GameObject parent, string name)
+        public static GameObject GetChildOf(GameObject parent, string name)
         {
             foreach (Transform child in parent.transform)
             {
@@ -108,18 +120,45 @@ namespace Assets.Scripts
                 }
             }
             return null;
-        }   
+        }
 
+
+        /// <summary>
+        /// Gets a child of <paramref name="parent"/> by <paramref name="name"/>, including grandchildren
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static GameObject GetAnyChildOf(GameObject parent, string name)
+        {
+            foreach (Transform child in parent.transform)
+            {
+                if (child.name == name)
+                {
+                    return child.gameObject;
+                }
+                else
+                {
+                    GameObject result = GetAnyChildOf(child.gameObject, name);
+                    if (result != null) return result;
+                }
+            }
+            return null;
+        }
+
+
+        //UNFINISHED
         /// <summary>
         /// Returns a <see cref="Vector3"/> with all values set to the given input
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public static Vector3 FloatToVector3(float input){
+        public static Vector3 FloatToVector3(float input)
+        {
             return new Vector3(input, input, input);
         }
 
-    	/// <summary>
+        /// <summary>
         /// Returns a <see cref="Slider"/> with the given name, for use in classes that do not inherit from <see cref="MonoBehaviour"/>
         /// </summary>
         /// <param name="name"></param>

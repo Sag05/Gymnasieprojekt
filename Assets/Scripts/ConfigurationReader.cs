@@ -114,29 +114,7 @@ namespace Assets.Scripts
                     }
                     objectPropInfo.SetValue(obj, enumFlags);
                 }
-
-                /*
-                else if (objectPropInfo.PropertyType == typeof(OrdinanceType))
-                {
-                    OrdinanceType ordinanceTypes = 0;
-                    foreach (string OrdinanceType in statementValue.Split(','))
-                    {
-                        ordinanceTypes |= (OrdinanceType)Enum.Parse(typeof(OrdinanceType), OrdinanceType, false);
-                    }
-                    objectPropInfo.SetValue(obj, ordinanceTypes);
-                }
-                else if (objectPropInfo.PropertyType == typeof(GuidanceType))
-                {
-                    GuidanceType guidanceTypes = 0;
-                    foreach (string guidanceType in statementValue.Split(','))
-                    {
-                        guidanceTypes |= (GuidanceType)Enum.Parse(typeof(GuidanceType), guidanceType, false);
-                    }
-                    objectPropInfo.SetValue(obj, guidanceTypes);
-                }
-                */
             }
-
             Debug.Log("APPLIED [" + fieldName + "] = [" + statementValue + "]");
             return true;
         }
