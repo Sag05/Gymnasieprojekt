@@ -54,7 +54,6 @@ namespace Assets.Scripts.Vehicles.Components
             return (T) this.Components.FirstOrDefault(x => x.GetType() == typeof(T));
         }
 
-
         /// <summary>
         /// Returns all components in the list with the given type
         /// </summary>
@@ -83,7 +82,6 @@ namespace Assets.Scripts.Vehicles.Components
                 if (currentDisplayNumber == i++)
                 {
                     display.IsSensorOfInterest = true;
-                    currentDisplay = display;
                 }
                 i++;
             }

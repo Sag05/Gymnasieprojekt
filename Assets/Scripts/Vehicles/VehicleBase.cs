@@ -1,10 +1,6 @@
 ﻿
 using Assets.Scripts.Vehicles.Components;
-using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-
 
 namespace Assets.Scripts.Vehicles
 {
