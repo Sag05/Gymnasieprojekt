@@ -2,7 +2,6 @@ using Assets.Scripts;
 using Assets.Scripts.Vehicles;
 using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PhysicsUtils : MonoBehaviour

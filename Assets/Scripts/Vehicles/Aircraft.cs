@@ -44,11 +44,7 @@ public class Aircraft : VehicleBase
 
         foreach (ComponentBase component in base.VehicleComponents.Components)
         {
-            if(component is Pylon pylon)
-            {
-                Debug.Log(pylon.GetPylonInfo());
-            }
-            else if (component is AircraftEngine engine)
+            if (component is AircraftEngine engine)
             {
                 engine.EngineEnabled = true;
             }

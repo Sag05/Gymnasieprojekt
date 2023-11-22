@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.Vehicles.Components
 {
@@ -12,6 +13,10 @@ namespace Assets.Scripts.Vehicles.Components
     /// </summary>
     public abstract class BaseWeaponHardpoint : ComponentBase, ITickableComponent
     {
+        public string HardpointName { get => this.hardpointName; set { this.HardpointObject = GameObject.Find(value); this.hardpointName = value; } }
+        private string hardpointName;
+        public GameObject HardpointObject { get; set; }
+
         /// <summary>
         /// Weapons attached to this hardpoint
         /// 
@@ -39,6 +44,21 @@ namespace Assets.Scripts.Vehicles.Components
     {
         public WeaponHardpoint(VehicleBase vehicle) : base(vehicle)
         {
+        }
+        public float MaxAcceptedMass { get => this.maxAcceptedMass; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxAcceptedMass", value, "MaxAcceptedMass can not be less than or equal to 0"); this.maxAcceptedMass = value; } }
+        private float maxAcceptedMass;
+        public OrdinanceType AcceptedOrdinanceTypes { get; set; }
+        public GuidanceType AcceptedGuidanceTypes { get; set; }
+        public OrdinanceBase CurrentOrdinance { get; set; }
+
+        void UpdateOrdinance()
+        {
+            if (this.CurrentOrdinance is not null)
+            {
+                this.CurrentOrdinance.transform.SetParent(this.HardpointObject.transform);
+                this.CurrentOrdinance.transform.localPosition = Vector3.zero;
+                this.CurrentOrdinance.transform.localRotation = Quaternion.identity;
+            }
         }
     }
     /// <summary>
