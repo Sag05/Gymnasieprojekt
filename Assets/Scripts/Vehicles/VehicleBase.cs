@@ -16,12 +16,12 @@ namespace Assets.Scripts.Vehicles
         /// Current controller of the vehicle
         /// </summary>
         public PlayerController Controller { get; set; }
+        public ComponentManager VehicleComponents { get; set; }
         /// <summary>
         /// The position of the camera of the controller
         /// </summary>
         public GameObject ControllerCameraPosition { get; private set; }
         public GameObject Model { get; set; }
-        public ComponentManager VehicleComponents { get; set; }
         public Rigidbody VehicleBody { get; set; }
 
         //Velocity

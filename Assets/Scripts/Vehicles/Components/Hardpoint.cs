@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using Assets.Scripts.Ordinance;
 
 namespace Assets.Scripts.Vehicles.Components
 {
     /// <summary>
-    /// The base class for weapon hardpoints. Use <b><see cref="WeaponHardpoint"/></b> or <b><see cref="StaticWeaponHardpoint"/></b> to utilize this
+    /// The base class for hardpoints. Use <b><see cref="Hardpoint"/></b> or <b><see cref="StaticHardpoint"/></b> to utilize this
     /// </summary>
-    public abstract class BaseWeaponHardpoint : ComponentBase, ITickableComponent
+    public abstract class BaseHardpoint : ComponentBase, ITickableComponent
     {
         public string HardpointName { get => this.hardpointName; set { this.HardpointObject = GameObject.Find(value); this.hardpointName = value; } }
         private string hardpointName;
@@ -24,54 +20,59 @@ namespace Assets.Scripts.Vehicles.Components
         /// </summary>
         /// <value>Weapons contained on this pylon</value>
         // TODO: Implement core weapon logic
-        public dynamic[] Weapons { get; set; }
-        public BaseWeaponHardpoint(VehicleBase vehicle) : base(vehicle)
+        public dynamic Attatchment { get; set; }
+        
+        public BaseHardpoint(VehicleBase vehicle) : base(vehicle)
         {
-            this.Weapons = new object[0] { };
+
+        }
+
+        public void Fire()
+        {
+
         }
 
         bool ITickableComponent.PostTickComponent() => true;
         bool ITickableComponent.PreTickComponent() => true;
     }
+
     /// <summary>
     /// Class for weapon hardpoints.
     /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{WeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
     /// 
-    /// <para>This type is for dynamic hardpoints that <b>can</b> be removed, for static weapons that <b>can not</b> be removed use <see cref="StaticWeaponHardpoint"/>.</para>
+    /// <para>This type is for dynamic hardpoints that <b>can</b> be removed, for static weapons that <b>can not</b> be removed use <see cref="StaticHardpoint"/>.</para>
     /// </summary>
-    public sealed class WeaponHardpoint : BaseWeaponHardpoint
+    public class Hardpoint : BaseHardpoint
     {
-        public WeaponHardpoint(VehicleBase vehicle) : base(vehicle)
-        {
-        }
+        public Hardpoint(VehicleBase vehicle) : base(vehicle) { }
         public float MaxAcceptedMass { get => this.maxAcceptedMass; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxAcceptedMass", value, "MaxAcceptedMass can not be less than or equal to 0"); this.maxAcceptedMass = value; } }
         private float maxAcceptedMass;
         public OrdinanceType AcceptedOrdinanceTypes { get; set; }
         public GuidanceType AcceptedGuidanceTypes { get; set; }
-        public OrdinanceBase CurrentOrdinance { get; set; }
 
         void UpdateOrdinance()
         {
-            if (this.CurrentOrdinance is not null)
+            if (this.Attatchment != null)
             {
-                this.CurrentOrdinance.transform.SetParent(this.HardpointObject.transform);
-                this.CurrentOrdinance.transform.localPosition = Vector3.zero;
-                this.CurrentOrdinance.transform.localRotation = Quaternion.identity;
+                this.Attatchment.transform.SetParent(this.HardpointObject.transform);
+                this.Attatchment.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
             }
         }
     }
+
     /// <summary>
     /// Class for static weapon hardpoints.
     /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
     /// 
-    /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="WeaponHardpoint"/>.</para>
+    /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="Hardpoint"/>.</para>
     /// </summary>
-    public sealed class StaticWeaponHardpoint : BaseWeaponHardpoint
+    public class StaticHardpoint : BaseHardpoint
     {
-        public StaticWeaponHardpoint(VehicleBase vehicle) : base(vehicle)
+        public StaticHardpoint(VehicleBase vehicle) : base(vehicle) 
         {
+            
         }
     }
 }

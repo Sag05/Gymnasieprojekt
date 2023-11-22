@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Ordinance
 {
-    internal class OrdinanceConfigBase
+    public class OrdinanceConfig
     {
         /// <summary>
         /// The mass of the ordinance in Kg
@@ -27,7 +27,7 @@ namespace Assets.Scripts.Ordinance
         public float AdditionalDragCoefficient { get; set; }
     }
     
-    internal class TargetingPodConfig : OrdinanceConfigBase
+    public class TargetingPodConfig
     {
         /// <summary>
         /// Maximum zoom of the pod

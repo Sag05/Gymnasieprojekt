@@ -10,14 +10,21 @@ public class Aircraft : VehicleBase
     private AircraftConfiguration AircraftConfiguration;
     private DoubleVector3 steering = new DoubleVector3();
     public float Throttle { get; set; }
-
     Animation gearAnimation;
     #endregion
     
     public void SwitchSOI()
     {
         base.VehicleComponents.LoopSOI();
-    }    
+    }
+
+    private void SetController()
+    {
+        Debug.Log("Setting camera position to " + this.AircraftConfiguration.CameraPosition + " for " + base.ControllerCameraPosition);
+        base.ControllerCameraPosition.transform.localPosition = this.AircraftConfiguration.CameraPosition;
+        Controller.transform.SetParent(base.ControllerCameraPosition.transform);
+        Controller.transform.localPosition = Vector3.zero;
+    }
 
     private void LoadModel(){
         //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
@@ -35,21 +42,22 @@ public class Aircraft : VehicleBase
 
         base.Start();
 
-        Debug.Log("Setting camera position to " + this.AircraftConfiguration.CameraPosition + " for " + base.ControllerCameraPosition);
-        base.ControllerCameraPosition.transform.localPosition = this.AircraftConfiguration.CameraPosition;
-        Controller.transform.SetParent(base.ControllerCameraPosition.transform);
-        Controller.transform.localPosition = Vector3.zero;
+        SetController();
 
         LoadModel();
 
         foreach (ComponentBase component in base.VehicleComponents.Components)
         {
             if (component is AircraftEngine engine)
-            {
+            {   //Enable engines
                 engine.EngineEnabled = true;
             }
+            else if (component is StoresManagementSystem SMS)
+            {   //Reload Stores Management System
+                SMS.ReloadSMS();
+            }
             else if (component is SuspensionManager suspensionManager)
-            {
+            {   //Start Suspension
                 suspensionManager.Start();
             }
         }

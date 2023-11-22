@@ -25,13 +25,12 @@ namespace Assets.Scripts
     public enum PodType
     {
         ECM,
-        Countermeasure,
-        TargetingPod,
-        FuelTank
+        Radar,
+        TargetingPod
     }
 
     /// <summary>
-    /// A set of flags for a pylon for what ordinance it may carry for a <see cref="BaseWeaponHardpoint"/>
+    /// A set of flags for a pylon for what ordinance it may carry for a <see cref="BaseHardpoint"/>
     /// </summary>
     [Flags]
     public enum OrdinanceType

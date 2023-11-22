@@ -193,7 +193,7 @@ public class PhysicsUtils : MonoBehaviour
        Vector3 localVelocity, float angleOfAttack, int liftPower, float inducedDragCoefficient)
     {
         //Project velocity onto plane
-        Vector3 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);        
+        Vector3 liftVelocity = Vector3.ProjectOnPlane(localVelocity, rightAxis);
 
         //Coefficiient vaies with aoa
         float liftCoefficient = liftCurve.Evaluate(angleOfAttack * Mathf.Rad2Deg);
