@@ -7,9 +7,8 @@ namespace Assets.Scripts.Vehicles.Components
 {
     internal class SuspensionManager : ComponentBase, ITickableComponent
     {
-        public SuspensionManager(VehicleBase vehicle) : base(vehicle)
+        public SuspensionManager()
         {
-            parentVehicle = vehicle;
         }
 
         public List<Suspension> Suspensions { get; set; }
@@ -45,10 +44,9 @@ namespace Assets.Scripts.Vehicles.Components
 
     internal class Suspension : ComponentBase
     {
-        public Suspension(VehicleBase vehicle) : base(vehicle)
+        public Suspension()
         {
-            parentVehicle = vehicle;
-            if(parentVehicle.VehicleComponents.GetComponentOfType<SuspensionManager>()is null) parentVehicle.VehicleComponents.AddComponent(new SuspensionManager(vehicle));
+            // if(parentVehicle.VehicleComponents.GetComponentOfType<SuspensionManager>()is null) parentVehicle.VehicleComponents.AddComponent(new SuspensionManager(vehicle));
         }
         private VehicleBase parentVehicle;
 

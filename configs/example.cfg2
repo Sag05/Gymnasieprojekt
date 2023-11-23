@@ -1,0 +1,4 @@
+# obj aircraftconfig AircraftConfiguration;
+
+obj theComponent Assets.Scripts.Vehicles.Components.HelmetMountedDisplay;
+prop HitPoints 1000;

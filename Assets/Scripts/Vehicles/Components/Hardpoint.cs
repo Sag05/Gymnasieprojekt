@@ -22,7 +22,7 @@ namespace Assets.Scripts.Vehicles.Components
         // TODO: Implement core weapon logic
         public dynamic Attatchment { get; set; }
         
-        public BaseHardpoint(VehicleBase vehicle) : base(vehicle)
+        public BaseHardpoint()
         {
 
         }
@@ -40,7 +40,7 @@ namespace Assets.Scripts.Vehicles.Components
     /// </summary>
     public class Hardpoint : BaseHardpoint
     {
-        public Hardpoint(VehicleBase vehicle) : base(vehicle) { }
+        public Hardpoint(VehicleBase vehicle){ }
         public float MaxAcceptedMass { get => this.maxAcceptedMass; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxAcceptedMass", value, "MaxAcceptedMass can not be less than or equal to 0"); this.maxAcceptedMass = value; } }
         private float maxAcceptedMass;
         public OrdinanceType AcceptedOrdinanceTypes { get; set; }
@@ -65,7 +65,7 @@ namespace Assets.Scripts.Vehicles.Components
     /// </summary>
     public class StaticHardpoint : BaseHardpoint
     {
-        public StaticHardpoint(VehicleBase vehicle) : base(vehicle) 
+        public StaticHardpoint(VehicleBase vehicle)
         {
             
         }

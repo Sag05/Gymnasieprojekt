@@ -8,8 +8,10 @@ namespace Assets.Scripts.Vehicles.Components
 {
     public class ComponentBase
     {
+        [Obsolete]
         public ComponentBase(VehicleBase vehicle) { this.ParentVehicle = vehicle; }
-        
+        public ComponentBase() { }
+
         /// <summary>
         /// Parent vehiclebase of the component
         /// </summary>

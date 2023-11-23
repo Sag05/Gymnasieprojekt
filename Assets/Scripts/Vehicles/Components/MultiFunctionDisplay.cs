@@ -13,7 +13,12 @@ public class MultiFunctionDisplay : ComponentBase, ITickableComponent
         SMS,
         WPN
     }
-    MultiFunctionDisplay(VehicleBase vehicle, GameObject gameObject) : base(vehicle)
+    public MultiFunctionDisplay()
+    {
+
+    }
+    /*
+    public void Init()
     {
         this.MFDCanvasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/MFDCanvas.prefab");
         this.buttonTextsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/ButtonTexts.prefab");
@@ -34,7 +39,7 @@ public class MultiFunctionDisplay : ComponentBase, ITickableComponent
         }
 
         SwitchToMFDPage(DefaultPage);
-    }
+    }*/
 
     /// <summary>
     /// If sensor is the current sensor of interest. 

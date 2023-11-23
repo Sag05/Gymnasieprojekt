@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class StoresManagementSystem : ComponentBase
 {
-    public StoresManagementSystem(VehicleBase vehicle) : base(vehicle)
+    public StoresManagementSystem()
     {
 
     }

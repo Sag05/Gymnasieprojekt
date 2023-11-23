@@ -6,7 +6,7 @@ namespace Assets.Scripts.Vehicles.Components
 {
     internal class HelmetMountedDisplay : ComponentBase, ITickableComponent
     {
-        public HelmetMountedDisplay(VehicleBase vehicle) : base(vehicle) 
+        public HelmetMountedDisplay()
         {
             HMDCanvasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/HMDCanvas.prefab");
             HMDCanvas = GameObject.Instantiate(HMDCanvasPrefab); 
