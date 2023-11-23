@@ -1,42 +1,35 @@
 using System;
+using System.Collections.Generic;
 using Assets.Scripts;
 using Assets.Scripts.Ordinance;
 using UnityEngine;
 
-public class OrdinanceBase : MonoBehaviour
+namespace Assets.Scripts.Ordinance
 {
-    public OrdinanceConfig configuration;
-    public string Name { get; set; }
-    public float Mass { get => mass; set {if (value <= 0) throw new ArgumentOutOfRangeException("Mass", Mass, "Mass can not be less than or equal to 0"); mass = value; } }
-    private float mass;
-    public void FireWeapon()
+    public class OrdinanceBase : MonoBehaviour
     {
+        public OrdinanceBase()
+        {
+            configuration = ConfigurationReader.LoadOrdinance(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+        }
+        public OrdinanceConfig configuration;
+        public Rigidbody Rigidbody { get; private set; }
+        public float Mass { get => mass; set {if (value <= 0) throw new ArgumentOutOfRangeException("Mass", Mass, "Mass can not be less than or equal to 0"); mass = value; } }
+        private float mass;
+        
+        /// <summary>
+        /// The type of guidance used by the ordinance
+        /// </summary>
+        public GuidanceType GuidanceType { get; set; }
 
+        public void Fire()
+        {
+
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            
+        }
     }
-}
-
-public class Rocket : OrdinanceBase
-{
-
-}
-
-public class Bomb : OrdinanceBase
-{
-
-}
-
-
-public class Pod : OrdinanceBase
-{
-
-}
-
-public class Gun : OrdinanceBase
-{
-
-}
-
-public class Dispenser : OrdinanceBase
-{
-
 }

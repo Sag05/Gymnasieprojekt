@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Ordinance;
 using Assets.Scripts.Vehicles;
 using Assets.Scripts.Vehicles.Components;
 using UnityEngine;
@@ -9,10 +10,8 @@ public class StoresManagementSystem : ComponentBase
 {
     public StoresManagementSystem(VehicleBase vehicle) : base(vehicle)
     {
-        this.parentVehicle = vehicle;
-    }
 
-    private VehicleBase parentVehicle;
+    }
 
     //Dynamic hardpoints
     private List<Hardpoint> hardpoints;
@@ -27,8 +26,8 @@ public class StoresManagementSystem : ComponentBase
     public void ReloadSMS()
     {
         //Get hardpoints
-        this.hardpoints = this.parentVehicle.VehicleComponents.GetComponentsOfType<Hardpoint>().ToList();
-        this.staticHardpoints = this.parentVehicle.VehicleComponents.GetComponentsOfType<StaticHardpoint>().ToList();
+        this.hardpoints = this.ParentVehicle.VehicleComponents.GetComponentsOfType<Hardpoint>().ToList();
+        this.staticHardpoints = this.ParentVehicle.VehicleComponents.GetComponentsOfType<StaticHardpoint>().ToList();
     }
 
     public void SelectSecondaryOrdinanceType(OrdinanceBase type)
@@ -120,8 +119,11 @@ public class StoresManagementSystem : ComponentBase
     {
         for (int i = 0; i < rippleQuantity; i++)
         {
-            if (selectedHardpoints[i].Attatchment.)
             selectedHardpoints[i].Attatchment.Fire();
+            if((OrdinanceBase) selectedHardpoints[i].Attatchment == null)
+            {
+                selectedHardpoints.RemoveAt(i);
+            }
             yield return new WaitForSeconds(rippleDelay);
         }
     }

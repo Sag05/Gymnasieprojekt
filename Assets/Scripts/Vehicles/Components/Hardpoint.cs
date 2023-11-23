@@ -27,11 +27,6 @@ namespace Assets.Scripts.Vehicles.Components
 
         }
 
-        public void Fire()
-        {
-
-        }
-
         bool ITickableComponent.PostTickComponent() => true;
         bool ITickableComponent.PreTickComponent() => true;
     }
@@ -64,7 +59,7 @@ namespace Assets.Scripts.Vehicles.Components
     /// <summary>
     /// Class for static weapon hardpoints.
     /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
-    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
+    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all static pylons for a vehicle.</para>
     /// 
     /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="Hardpoint"/>.</para>
     /// </summary>

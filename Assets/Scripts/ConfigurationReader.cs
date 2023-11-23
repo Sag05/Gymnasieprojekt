@@ -14,7 +14,7 @@ namespace Assets.Scripts
     internal class ConfigurationReader
     {
         private enum AIRCRAFTCONFIGCONTEXT { NONE, AIRCRAFTCONFIG, COMPONENTCONFIG, ANIMATIONCURVE }
-        private enum ORDINANCECONFIGCONTEXT { NONE, ORDINANCECONFIG, ANIMATIONCURVE }
+        private enum ORDINANCECONFIGCONTEXT { NONE, ORDINANCECONFIG, COMPONENTCONFIG, ANIMATIONCURVE }
 
         private static bool SetCulture()
         {
@@ -143,13 +143,14 @@ namespace Assets.Scripts
             return true;
         }
 
-        public static TargetingPodConfig LoadTargetingPod(string configPath){
+        public static OrdinanceConfig LoadOrdinance(string configPath, OrdinanceBase caller){
             SetCulture();
 
             ORDINANCECONFIGCONTEXT CurrentConfigurationContext = ORDINANCECONFIGCONTEXT.NONE;
             ORDINANCECONFIGCONTEXT storedConfigurationContext = ORDINANCECONFIGCONTEXT.NONE;
             string animationCurveName = null;
-            object targetingPodConfig = new TargetingPodConfig();
+            object ComponentObject = null;
+            object ordinanceConfig = new OrdinanceConfig();
             List<Keyframe> keyframes = new List<Keyframe>();
 
             using (StreamReader r = new StreamReader(configPath)){
@@ -168,6 +169,16 @@ namespace Assets.Scripts
                                     break;
                             }
                             break;
+                        // Component handling
+                        case "NEWCOMPONENT":
+                            if (CurrentConfigurationContext != ORDINANCECONFIGCONTEXT.COMPONENTCONFIG) break;
+                            Type componentType = Type.GetType(statement[1]);
+                            ComponentObject = Activator.CreateInstance(componentType, new object[] { caller });
+                            // ComponentObject = componentType.GetConstructor(new Type[] { typeof(VehicleBase) }).Invoke();
+                            break;
+                        case "FINISHCOMPONENT":
+                            ((OrdinanceConfig)ordinanceConfig).Components.Add((OrdinanceComponentBase)ComponentObject);
+                            break;
                         case "ANIMATIONCURVE":
                             if (CurrentConfigurationContext == ORDINANCECONFIGCONTEXT.ANIMATIONCURVE) break;
                             storedConfigurationContext = CurrentConfigurationContext;
@@ -178,14 +189,17 @@ namespace Assets.Scripts
                             CurrentConfigurationContext = storedConfigurationContext;
                             switch (CurrentConfigurationContext){
                                 case ORDINANCECONFIGCONTEXT.ORDINANCECONFIG:
-                                    ApplyAnimationCurve(ref targetingPodConfig, animationCurveName, keyframes);
+                                    ApplyAnimationCurve(ref ordinanceConfig, animationCurveName, keyframes);
                                     break;
                             }
                             break;
                         default:
                             switch (CurrentConfigurationContext){
                                 case ORDINANCECONFIGCONTEXT.ORDINANCECONFIG:
-                                    ApplyFieldToObject(ref targetingPodConfig, statement[0], statement[1]);
+                                    ApplyFieldToObject(ref ordinanceConfig, statement[0], statement[1]);
+                                    break;
+                                case ORDINANCECONFIGCONTEXT.COMPONENTCONFIG:
+                                    ApplyFieldToObject(ref ComponentObject, statement[0], statement[1]);
                                     break;
                                 case ORDINANCECONFIGCONTEXT.ANIMATIONCURVE:
                                     Keyframe keyframe = new Keyframe(float.Parse(statement[0]), float.Parse(statement[1]));
@@ -197,7 +211,7 @@ namespace Assets.Scripts
                 }
             }
 
-            return (TargetingPodConfig)targetingPodConfig;
+            return (OrdinanceConfig)ordinanceConfig;
         }
 
         public static AircraftConfiguration LoadAircraft(string configPath, VehicleBase caller)

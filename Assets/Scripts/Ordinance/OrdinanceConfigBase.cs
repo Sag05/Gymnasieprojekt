@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.Ordinance
 {
@@ -9,14 +10,12 @@ namespace Assets.Scripts.Ordinance
         /// </summary>
         public float Mass { get => mass; set { if (value <= 0) throw new ArgumentOutOfRangeException("Mass", value, "Mass can not be less than or equal to 0"); this.mass = value * GameManager.scaleFactor;}} 
         private float mass;
+        public List<OrdinanceComponentBase> Components { get; set; }
+
         /// <summary>
         /// The type of ordinance
         /// </summary>
         public OrdinanceType OrdinanceType { get; set; }
-        /// <summary>
-        /// The type of guidance used by the ordinance
-        /// </summary>
-        public GuidanceType GuidanceType { get; set; }
         /// <summary>
         /// The name of the model
         /// </summary>
