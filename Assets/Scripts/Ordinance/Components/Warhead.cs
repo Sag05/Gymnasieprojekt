@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 
 namespace Assets.Scripts.Ordinance.Components
 {
@@ -8,5 +9,7 @@ namespace Assets.Scripts.Ordinance.Components
 
         public int TNTEqivelent { get => tntEquivelent; set { if (value <= 0) throw new ArgumentOutOfRangeException("TNTequivelent", TNTEqivelent, "THTEquivelent can not be less than or equal to 0!"); tntEquivelent = value; } }
         private int tntEquivelent;
+
+        
     }
 }
