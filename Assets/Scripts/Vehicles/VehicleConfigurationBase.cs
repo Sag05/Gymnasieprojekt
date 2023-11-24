@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.Vehicles.Components;
+using Assets.Scripts.Components;
 
 namespace Assets.Scripts.Vehicles
 {

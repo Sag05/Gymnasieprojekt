@@ -1,8 +1,9 @@
 ﻿using System;
 using UnityEngine;
 using Assets.Scripts.Ordinance;
+using Assets.Scripts.Vehicles;
 
-namespace Assets.Scripts.Vehicles.Components
+namespace Assets.Scripts.Components
 {
     /// <summary>
     /// The base class for hardpoints. Use <b><see cref="Hardpoint"/></b> or <b><see cref="StaticHardpoint"/></b> to utilize this

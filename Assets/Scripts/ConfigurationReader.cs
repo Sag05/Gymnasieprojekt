@@ -6,8 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Globalization;
 using Assets.Scripts.Vehicles;
-using Assets.Scripts.Vehicles.Components;
 using Assets.Scripts.Ordinance;
+using Assets.Scripts.Components;
 
 namespace Assets.Scripts
 {
@@ -177,7 +177,7 @@ namespace Assets.Scripts
                             // ComponentObject = componentType.GetConstructor(new Type[] { typeof(VehicleBase) }).Invoke();
                             break;
                         case "FINISHCOMPONENT":
-                            ((OrdinanceConfig)ordinanceConfig).Components.Add((OrdinanceComponentBase)ComponentObject);
+                            ((OrdinanceConfig)ordinanceConfig).Components.Add((ComponentBase)ComponentObject);
                             break;
                         case "ANIMATIONCURVE":
                             if (CurrentConfigurationContext == ORDINANCECONFIGCONTEXT.ANIMATIONCURVE) break;

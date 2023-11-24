@@ -1,8 +1,8 @@
 using Assets.Scripts;
+using Assets.Scripts.Components;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 
 public class PlayerController : MonoBehaviour
 {
@@ -34,28 +34,43 @@ public class PlayerController : MonoBehaviour
     }
 
     #region FireWeapon
-    public void OnFirePrimaryWeapon(InputAction action)
-    {
-        action.started += ctx => StartFirePrimaryWeapon();
-        action.canceled += ctx => StopFirePrimaryWeapon();
-    }
+    //public void OnFirePrimaryWeapon()
+    //{
+    //action.started += ctx => StartFirePrimaryWeapon();
+    //action.canceled += ctx => StopFirePrimaryWeapon();
+    //}
 
-    public void OnFirePrimaryWeapon(InputAction.CallbackContext context)
+
+    //public void OnFirePrimaryWeapon(InputAction.CallbackContext context)
+    //{
+    //    if (context.started)
+    //    {
+    //        StartFirePrimaryWeapon();
+    //    }
+    //    else if (context.canceled)
+    //    {
+    //        StopFirePrimaryWeapon();
+    //    }
+    //}
+
+
+    bool fireWasPressed = false;
+
+    public void OnFirePrimaryWeapon(InputValue value)
     {
-        if(context.started)
-        { 
-            StartFirePrimaryWeapon();
-        }
-        else if(context.canceled)
+        if(fireWasPressed != value.isPressed)
         {
-            StopFirePrimaryWeapon();
+            if (value.isPressed)
+            {
+                StartFirePrimaryWeapon();
+            }
+            else
+            {
+                StopFirePrimaryWeapon();
+            }
         }
+        fireWasPressed = value.isPressed;
     }
-
-    /*public void OnFirePrimaryWeapon(InputValue action)
-    {
-        action.Get<ButtonControl>().wasPressedThisFrame  StartFirePrimaryWeapon();
-    }*/
     #endregion
 
     private void StartFirePrimaryWeapon() => controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().StartFirePrimaryWeapon();
@@ -63,7 +78,7 @@ public class PlayerController : MonoBehaviour
     
     public void OnFireSecondaryWeapon()
     {
-        controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().FireSecondaryWeapon(monoBehaviour);
+        controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().FireSecondaryWeapon();
     }
 
     public void OnSwitchSOI()

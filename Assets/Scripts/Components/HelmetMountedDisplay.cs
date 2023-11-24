@@ -1,8 +1,9 @@
-﻿using TMPro;
+﻿using Assets.Scripts.Vehicles;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-namespace Assets.Scripts.Vehicles.Components
+namespace Assets.Scripts.Components
 {
     internal class HelmetMountedDisplay : ComponentBase, ITickableComponent
     {

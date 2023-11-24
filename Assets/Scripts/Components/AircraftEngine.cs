@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Assets.Scripts.Vehicles;
+using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Vehicles.Components
+namespace Assets.Scripts.Components
 {
     public class AircraftEngine : ComponentBase, ITickableComponent
     {

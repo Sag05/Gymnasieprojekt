@@ -1,5 +1,4 @@
-﻿
-using Assets.Scripts.Vehicles.Components;
+﻿using Assets.Scripts.Components;
 using UnityEngine;
 
 namespace Assets.Scripts.Vehicles

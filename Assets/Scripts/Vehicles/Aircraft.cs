@@ -1,8 +1,8 @@
 using Assets.Scripts;
 using Assets.Scripts.Vehicles;
-using Assets.Scripts.Vehicles.Components;
 using UnityEngine;
 using System.Linq;
+using Assets.Scripts.Components;
 
 public class Aircraft : VehicleBase
 {

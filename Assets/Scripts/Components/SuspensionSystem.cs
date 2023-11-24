@@ -1,9 +1,10 @@
+using Assets.Scripts.Vehicles;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-namespace Assets.Scripts.Vehicles.Components
+namespace Assets.Scripts.Components
 {
     internal class SuspensionManager : ComponentBase, ITickableComponent
     {

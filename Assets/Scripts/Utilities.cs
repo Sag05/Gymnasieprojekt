@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Assets.Scripts.Vehicles.Components;
 
 namespace Assets.Scripts
 {

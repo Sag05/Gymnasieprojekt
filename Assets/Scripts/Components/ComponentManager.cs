@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts.Ordinance;
+using Assets.Scripts.Vehicles;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 
-namespace Assets.Scripts.Vehicles.Components
+namespace Assets.Scripts.Components
 {
     /// <summary>
     /// A component manager for a vehicle
@@ -11,13 +13,19 @@ namespace Assets.Scripts.Vehicles.Components
     {
         public ComponentManager(VehicleBase root)
         {
-            this.RootVehicle = root;
+            this.RootObject = root;
             this.Components = new List<ComponentBase>();
         }
+        public ComponentManager(OrdinanceBase root)
+        {
+            this.RootObject = root;
+            this.Components = new List<ComponentBase>();
+        }
+
         /// <summary>
         /// Root vehicle
         /// </summary>
-        public VehicleBase RootVehicle { get; private set; }
+        public dynamic RootObject { get; private set; }
         /// <summary>
         /// Contains all components for an aircraft
         /// </summary>
@@ -30,7 +38,7 @@ namespace Assets.Scripts.Vehicles.Components
         /// <param name="component"></param>
         public void AddComponent(ComponentBase component)
         {
-            component.ParentVehicle = this.RootVehicle;
+            component.ParentObject = this.RootObject;
             this.Components.Add(component);
         }
         /// <summary>
@@ -41,7 +49,7 @@ namespace Assets.Scripts.Vehicles.Components
         public void AddComponents(ComponentBase[] components)
         {
             foreach(ComponentBase c in components)
-                c.ParentVehicle = this.RootVehicle;
+                c.ParentObject = this.RootObject;
             this.Components.AddRange(components);
         }
 
