@@ -12,9 +12,9 @@ namespace Assets.Scripts
         }
 
         public ComponentManager EntityComponents { get; set; }
-        public Rigidbody EntityBody { get; private set; } 
+        public Rigidbody EntityBody { get; set; } 
 
-        void Start(){
+        void Awake(){
             if (this.gameObject.GetComponent<Rigidbody>() is not null)
             {
                 this.EntityBody = this.gameObject.GetComponent<Rigidbody>();
@@ -23,6 +23,8 @@ namespace Assets.Scripts
             {
                 this.EntityBody = this.gameObject.AddComponent<Rigidbody>();
             }
+        }
+        void Start(){
         }
     }
 }

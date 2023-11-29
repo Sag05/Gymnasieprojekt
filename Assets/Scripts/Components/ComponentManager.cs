@@ -3,6 +3,7 @@ using Assets.Scripts.Vehicles;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Assets.Scripts.Components
 {
@@ -66,7 +67,13 @@ namespace Assets.Scripts.Components
         /// <returns></returns>
         public T[] GetComponentsOfType<T>() where T : ComponentBase
         {
-            return (T[]) (from c in this.Components where c.GetType() == typeof(T) select c).ToArray();
+            ComponentBase[] components = this.Components.Where(x => x.GetType() == typeof(T)).ToArray();
+            if(components.Length == 0)
+            {
+                T[] emptyArray = new T[0];
+                return  emptyArray;
+            }
+            return (T[]) components;
         }
     }
 }

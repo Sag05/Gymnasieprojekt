@@ -263,7 +263,7 @@ namespace Assets.Scripts
                             // ComponentObject = componentType.GetConstructor(new Type[] { typeof(VehicleBase) }).Invoke();
                             break;
                         case "FINISHCOMPONENT":
-                            ((AircraftConfiguration)aircraftConfiguration).VehicleComponents.Add((ComponentBase)ComponentObject);
+                            ((AircraftConfiguration)aircraftConfiguration).EntityComponents.Add((ComponentBase)ComponentObject);
                             break;
 
                         // Animation curve handling

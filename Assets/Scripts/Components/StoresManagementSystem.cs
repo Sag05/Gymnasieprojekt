@@ -9,7 +9,7 @@ namespace Assets.Scripts.Components
 {
     public class StoresManagementSystem : ComponentBase
     {
-        public StoresManagementSystem(VehicleBase vehicle) : base(vehicle)
+        public StoresManagementSystem(Entity entity) : base(entity)
         {
 
         }

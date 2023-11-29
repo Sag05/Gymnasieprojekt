@@ -58,18 +58,20 @@ public class PlayerController : MonoBehaviour
 
     public void OnFirePrimaryWeapon(InputValue value)
     {
-        if(fireWasPressed != value.isPressed)
-        {
-            if (value.isPressed)
+        if (controlledVehicle is not null){
+            if(fireWasPressed != value.isPressed)
             {
-                StartFirePrimaryWeapon();
+                if (value.isPressed)
+                {
+                    StartFirePrimaryWeapon();
+                }
+                else
+                {
+                    StopFirePrimaryWeapon();
+                }
             }
-            else
-            {
-                StopFirePrimaryWeapon();
-            }
+            fireWasPressed = value.isPressed;
         }
-        fireWasPressed = value.isPressed;
     }
     #endregion
 
