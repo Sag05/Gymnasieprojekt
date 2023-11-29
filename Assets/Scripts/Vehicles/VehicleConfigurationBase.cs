@@ -17,7 +17,7 @@ namespace Assets.Scripts.Vehicles
         /// <summary>
         /// Represents base components, you'll have to forward them into the <see cref="ComponentManager"/> of your <see cref="VehicleBase"/> or derived class
         /// </summary>
-        public IList<ComponentBase> VehicleComponents { get; set; } = new List<ComponentBase>();
+        public IList<ComponentBase> EntityComponents { get; set; } = new List<ComponentBase>();
         /// <summary>
         /// The vehicle's mass, in kg
         /// </summary>

@@ -15,7 +15,7 @@ public class Aircraft : VehicleBase
     
     public void SwitchSOI()
     {
-        base.VehicleComponents.LoopSOI();
+        //base.EntityComponents.LoopSOI();
     }
 
     private void SetController()
@@ -38,7 +38,7 @@ public class Aircraft : VehicleBase
     new void Start()
     {
         this.AircraftConfiguration = ConfigurationReader.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
-        base.VehicleComponents.AddComponents(this.AircraftConfiguration.VehicleComponents.ToArray());
+        base.EntityComponents.AddComponents(this.AircraftConfiguration.EntityComponents.ToArray());
 
         base.Start();
 
@@ -46,7 +46,7 @@ public class Aircraft : VehicleBase
 
         LoadModel();
 
-        foreach (ComponentBase component in base.VehicleComponents.Components)
+        foreach (ComponentBase component in base.EntityComponents.Components)
         {
             if (component is AircraftEngine engine)
             {   //Enable engines
@@ -56,13 +56,9 @@ public class Aircraft : VehicleBase
             {   //Reload Stores Management System
                 SMS.ReloadSMS();
             }
-            else if (component is SuspensionManager suspensionManager)
-            {   //Start Suspension
-                suspensionManager.Start();
-            }
         }
 
-        this.VehicleBody.mass = this.AircraftConfiguration.Mass;
+        this.EntityBody.mass = this.AircraftConfiguration.Mass;
     }
 
     void Update()
@@ -88,7 +84,7 @@ public class Aircraft : VehicleBase
         float additionalDrag = 0;
 
         //Go through all components
-        foreach (ComponentBase component in this.VehicleComponents.Components)
+        foreach (ComponentBase component in this.EntityComponents.Components)
         {
             // Ticks any tickable components in the pre-phase
             if (component is ITickableComponent tickableComponent)
@@ -133,11 +129,11 @@ public class Aircraft : VehicleBase
         
         
         //Apply forces
-        this.VehicleBody.AddRelativeForce(lift + drag);
-        this.VehicleBody.AddRelativeForce(Vector3.forward * totalThrust);
+        this.EntityBody.AddRelativeForce(lift + drag);
+        this.EntityBody.AddRelativeForce(Vector3.forward * totalThrust);
 
         //Apply steering
-        base.VehicleBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
+        base.EntityBody.AddRelativeTorque(steering.vector1, ForceMode.VelocityChange);
 
         #region Debug
         #region DrawVectors
@@ -148,9 +144,9 @@ public class Aircraft : VehicleBase
         //Thrust
         Debug.DrawRay(base.transform.position, transform.forward * totalThrust / 1000, Color.blue);
         //Gravity
-        Debug.DrawRay(base.transform.position, base.VehicleBody.mass * 9.81f / 1000 * Vector3.down, Color.black);
+        Debug.DrawRay(base.transform.position, base.EntityBody.mass * 9.81f / 1000 * Vector3.down, Color.black);
         //Velocity
-        Debug.DrawRay(base.transform.position, base.VehicleBody.velocity / 1000, Color.white);
+        Debug.DrawRay(base.transform.position, base.EntityBody.velocity / 1000, Color.white);
         #endregion
         #region Logs
         //Debug.Log("Applied steering: " + steering.vector1);
@@ -162,7 +158,7 @@ public class Aircraft : VehicleBase
         Controller.DebugText.text += 
             "Drag: " + (transform.rotation * drag).ToString("0.0") + "N + T: " + drag.magnitude.ToString("0.0") +
             "N\nLift: " + (transform.rotation * lift).ToString("0.0") + "N + T: " + lift.magnitude.ToString("0.0") +
-            "N\nGravity: " + (base.VehicleBody.mass * 9.81f).ToString("0.0") + 
+            "N\nGravity: " + (base.EntityBody.mass * 9.81f).ToString("0.0") + 
             "N\nThrust: " + totalThrust.ToString("0.0") + 
             "N\nThrottle: " + this.Throttle.ToString("0.0") + "%" +
             "\nInput: " + controlInput.ToString("0.0") +
@@ -175,7 +171,7 @@ public class Aircraft : VehicleBase
         Debug.Log("Drag: " + drag + 
             "N\nLift: " + lift + 
             "N\nThrust: " + totalThrust + 
-            "N\nGravity: " + base.VehicleBody.mass * 9.81f);
+            "N\nGravity: " + base.EntityBody.mass * 9.81f);
             
         */
 

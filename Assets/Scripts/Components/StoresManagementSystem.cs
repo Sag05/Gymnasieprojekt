@@ -27,8 +27,8 @@ namespace Assets.Scripts.Components
         public void ReloadSMS()
         {
             //Get hardpoints
-            this.hardpoints = this.ParentObject.VehicleComponents.GetComponentsOfType<Hardpoint>().ToList();
-            this.staticHardpoints = this.ParentObject.VehicleComponents.GetComponentsOfType<StaticHardpoint>().ToList();
+            this.hardpoints = this.ParentObject.EntityComponents.GetComponentsOfType<Hardpoint>().ToList();
+            this.staticHardpoints = this.ParentObject.EntityComponents.GetComponentsOfType<StaticHardpoint>().ToList();
         }
 
         public void SelectSecondaryOrdinanceType(OrdinanceBase type)

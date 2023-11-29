@@ -73,12 +73,12 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    private void StartFirePrimaryWeapon() => controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().StartFirePrimaryWeapon();
-    private void StopFirePrimaryWeapon() => controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().StopFirePrimaryWeapon();
+    private void StartFirePrimaryWeapon() => controlledVehicle.GetComponent<Aircraft>().EntityComponents.GetComponentOfType<StoresManagementSystem>().StartFirePrimaryWeapon();
+    private void StopFirePrimaryWeapon() => controlledVehicle.GetComponent<Aircraft>().EntityComponents.GetComponentOfType<StoresManagementSystem>().StopFirePrimaryWeapon();
     
     public void OnFireSecondaryWeapon()
     {
-        controlledVehicle.GetComponent<Aircraft>().VehicleComponents.GetComponentOfType<StoresManagementSystem>().FireSecondaryWeapon();
+        controlledVehicle.GetComponent<Aircraft>().EntityComponents.GetComponentOfType<StoresManagementSystem>().FireSecondaryWeapon();
     }
 
     public void OnSwitchSOI()

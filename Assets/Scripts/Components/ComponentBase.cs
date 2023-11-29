@@ -5,12 +5,12 @@ namespace Assets.Scripts.Components
 {
     public class ComponentBase
     {
-        public ComponentBase(dynamic parent) { this.ParentObject = parent; }
+        public ComponentBase(Entity parent) { this.ParentObject = parent; }
         
         /// <summary>
         /// Parent vehiclebase of the component
         /// </summary>
-        public dynamic ParentObject { get; set; }
+        public Entity ParentObject { get; set; }
 
         /// <summary>
         /// Hit points of the component

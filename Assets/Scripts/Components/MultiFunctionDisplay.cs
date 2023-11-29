@@ -15,11 +15,11 @@ namespace Assets.Scripts.Components
             SMS,
             WPN
         }
-        MultiFunctionDisplay(VehicleBase vehicle, GameObject gameObject) : base(vehicle)
+        MultiFunctionDisplay(Entity entity) : base(entity)
         {
             this.MFDCanvasPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/MFDCanvas.prefab");
             this.buttonTextsPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/ButtonTexts.prefab");
-            this.MFDCanvas = GameObject.Instantiate(MFDCanvasPrefab, gameObject.transform);
+            this.MFDCanvas = GameObject.Instantiate(MFDCanvasPrefab, entity.gameObject.transform);
             this.buttonTexts = GameObject.Instantiate(buttonTextsPrefab, MFDCanvas.transform);
 
 
@@ -29,9 +29,9 @@ namespace Assets.Scripts.Components
             this.SMSPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/SMS.prefab");
             this.WPNPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/MFD/WPN.prefab");
 
-            for (int i = 0; i < gameObject.transform.childCount; i++)
+            for (int i = 0; i < entity.gameObject.transform.childCount; i++)
             {
-                this.sideButtons.Add(gameObject.transform.GetChild(i).gameObject);
+                this.sideButtons.Add(entity.gameObject.transform.GetChild(i).gameObject);
                 this.sideButtons[i].AddComponent<BoxCollider>();
             }
 

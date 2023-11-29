@@ -6,7 +6,7 @@ namespace Assets.Scripts.Components
 {
     public class AircraftEngine : ComponentBase, ITickableComponent
     {
-        public AircraftEngine(VehicleBase vehicle) : base(vehicle) { }
+        public AircraftEngine(Entity entity) : base(entity) { }
         #region Variables
         /// <summary>
         /// The maximum RPM of the turbine, measured in RPM

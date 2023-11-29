@@ -23,7 +23,7 @@ namespace Assets.Scripts.Components
         // TODO: Implement core weapon logic
         public dynamic Attatchment { get; set; }
         
-        public BaseHardpoint(VehicleBase vehicle) : base(vehicle)
+        public BaseHardpoint(Entity entity) : base(entity)
         {
 
         }
@@ -34,14 +34,14 @@ namespace Assets.Scripts.Components
 
     /// <summary>
     /// Class for weapon hardpoints.
-    /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
-    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{WeaponHardpoint}"/> if you want to gather all weapon pylons for a vehicle.</para>
+    /// <para>A entity <b>may</b> have multiple hardpoints in components.</para>
+    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{WeaponHardpoint}"/> if you want to gather all weapon pylons for a entity.</para>
     /// 
     /// <para>This type is for dynamic hardpoints that <b>can</b> be removed, for static weapons that <b>can not</b> be removed use <see cref="StaticHardpoint"/>.</para>
     /// </summary>
     public class Hardpoint : BaseHardpoint
     {
-        public Hardpoint(VehicleBase vehicle) : base(vehicle) { }
+        public Hardpoint(Entity entity) : base(entity) { }
         public float MaxAcceptedMass { get => this.maxAcceptedMass; set { if (value <= 0) throw new ArgumentOutOfRangeException("MaxAcceptedMass", value, "MaxAcceptedMass can not be less than or equal to 0"); this.maxAcceptedMass = value; } }
         private float maxAcceptedMass;
         public OrdinanceType AcceptedOrdinanceTypes { get; set; }
@@ -59,14 +59,14 @@ namespace Assets.Scripts.Components
 
     /// <summary>
     /// Class for static weapon hardpoints.
-    /// <para>A vehicle <b>may</b> have multiple hardpoints in components.</para>
-    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all static pylons for a vehicle.</para>
+    /// <para>A entity <b>may</b> have multiple hardpoints in components.</para>
+    /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all static pylons for a entity.</para>
     /// 
     /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="Hardpoint"/>.</para>
     /// </summary>
     public class StaticHardpoint : BaseHardpoint
     {
-        public StaticHardpoint(VehicleBase vehicle) : base(vehicle) 
+        public StaticHardpoint(Entity entity) : base(entity) 
         {
             
         }
