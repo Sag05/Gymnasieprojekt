@@ -23,11 +23,6 @@ namespace Assets.Scripts.Ordinance
 
         public void Fire()
         {
-
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
             
         }
     }
