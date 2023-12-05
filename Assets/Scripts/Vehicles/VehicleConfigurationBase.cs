@@ -32,6 +32,14 @@ namespace Assets.Scripts.Vehicles
     {
         public AnimationCurve AltitudeEffectivenessCurve { get; set; }
         
+        public string BodyName { get; set; }
+        public GameObject Body { get; set; }
+        public string LeftWingName { get; set; }
+        public GameObject LeftWing { get; set; }
+        public string RightWingName { get; set; }
+        public GameObject RightWing { get; set; }
+        
+
         #region Lift
         public int LiftPower { get; set; }
         public int RudderLiftPower { get; set; }

@@ -176,4 +176,40 @@ namespace Assets.Scripts
         }
 
     }
+
+    public class Vector6
+    {
+        public float Top { get; set; }
+        public float Bottom { get; set; }
+        public float Left { get; set; }
+        public float Right { get; set; }
+        public float Front { get; set; }
+        public float Back { get; set; }
+
+
+        public Vector6(float top, float bottom, float left, float right, float front, float back)
+        {
+            this.Top = top;
+            this.Bottom = bottom;
+            this.Left = left;
+            this.Right = right;
+            this.Front = front;
+            this.Back = back;
+        }
+
+        public float magnitude
+        {
+            get
+            {
+                return Mathf.Sqrt(
+                    Mathf.Pow(this.Top, 2) +
+                    Mathf.Pow(this.Bottom, 2) +
+                    Mathf.Pow(this.Left, 2) +
+                    Mathf.Pow(this.Right, 2) +
+                    Mathf.Pow(this.Front, 2) +
+                    Mathf.Pow(this.Back, 2)
+                    );
+            }
+        }
+    }
 }

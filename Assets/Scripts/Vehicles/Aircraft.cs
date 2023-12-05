@@ -31,7 +31,16 @@ public class Aircraft : VehicleBase
         //model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Aircraft/" + AircraftConfiguration.ModelName), transform);
         base.Model = GameObject.Find(AircraftConfiguration.ModelName);
         base.Model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
-        
+
+        //Find Body, LeftWing and RightWing and add colliders
+        this.AircraftConfiguration.Body = base.Model.transform.Find(AircraftConfiguration.BodyName).gameObject;
+        this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
+        this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
+        this.AircraftConfiguration.Body.AddComponent<MeshCollider>();
+        this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>();
+        this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>();
+
+
         gearAnimation = base.Model.AddComponent<Animation>();
     }
 
@@ -41,9 +50,7 @@ public class Aircraft : VehicleBase
         base.EntityComponents.AddComponents(this.AircraftConfiguration.EntityComponents.ToArray());
 
         base.Start();
-
         SetController();
-
         LoadModel();
 
         foreach (ComponentBase component in base.EntityComponents.Components)
@@ -59,16 +66,6 @@ public class Aircraft : VehicleBase
         }
 
         this.EntityBody.mass = this.AircraftConfiguration.Mass;
-    }
-
-    void Update()
-    {
-        #region Debug code
-        // == DEBUGGING CONTEXT == //
-        // All debugging content should be between this area
-        //Controller.DebugText.text = "";
-        // == END OF DEUBBING CONTEXT == //
-        #endregion
     }
 
     void FixedUpdate()
