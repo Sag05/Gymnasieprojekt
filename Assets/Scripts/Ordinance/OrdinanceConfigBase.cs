@@ -17,6 +17,10 @@ namespace Assets.Scripts.Ordinance
         /// </summary>
         public OrdinanceType OrdinanceType { get; set; }
         /// <summary>
+        /// The type of guidance used by the ordinance
+        /// </summary>
+        public GuidanceType GuidanceType { get; set; }
+        /// <summary>
         /// The name of the model
         /// </summary>
         public string ModelName { get; set; }

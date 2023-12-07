@@ -1,8 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using Assets.Scripts.Ordinance;
-using Assets.Scripts.Vehicles;
-using System.Collections.Generic;
 
 namespace Assets.Scripts.Components
 {
@@ -22,7 +20,7 @@ namespace Assets.Scripts.Components
         /// </summary>
         /// <value>Weapons contained on this pylon</value>
         // TODO: Implement core weapon logic
-        public dynamic Attatchment { get; set; }
+        public OrdinanceBase Attatchment { get; set; }
         
         public BaseHardpoint(Entity entity) : base(entity)
         {
@@ -38,7 +36,7 @@ namespace Assets.Scripts.Components
     /// <para>A entity <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{WeaponHardpoint}"/> if you want to gather all weapon pylons for a entity.</para>
     /// 
-    /// <para>This type is for dynamic hardpoints that <b>can</b> be removed, for static weapons that <b>can not</b> be removed use <see cref="StaticHardpoint"/>.</para>
+    /// <para>This type is for dynamic hardpoints that <b>can</b> have its content removed, for static weapons that <b>can not</b> have its content removed use <see cref="StaticHardpoint"/>.</para>
     /// </summary>
     public class Hardpoint : BaseHardpoint
     {
@@ -63,7 +61,7 @@ namespace Assets.Scripts.Components
     /// <para>A entity <b>may</b> have multiple hardpoints in components.</para>
     /// <para>Use <see cref="ComponentManager.GetComponentsOfType{StaticWeaponHardpoint}"/> if you want to gather all static pylons for a entity.</para>
     /// 
-    /// <para>This type is for static hardpoints that <b>can not</b> be removed, for dynamic weapons that <b>can</b> be removed use <see cref="Hardpoint"/>.</para>
+    /// <para>This type is for static hardpoints that <b>can not</b> have its content removed, for dynamic weapons that <b>can</b> have its content removed use <see cref="Hardpoint"/>.</para>
     /// </summary>
     public class StaticHardpoint : BaseHardpoint
     {

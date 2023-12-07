@@ -55,7 +55,7 @@ public class Aircraft : VehicleBase
 
         foreach (ComponentBase component in base.EntityComponents.Components)
         {
-            if (component is AircraftEngine engine)
+            if (component is TurbineEngine engine)
             {   //Enable engines
                 engine.EngineEnabled = true;
             }
@@ -89,7 +89,7 @@ public class Aircraft : VehicleBase
                 tickableComponent.PreTickComponent();
             }
             // Componenents should have their values get/set in this area
-            if (component is AircraftEngine engine)
+            if (component is TurbineEngine engine)
             {
                 engine.Altitude = base.Altitude;
                 engine.TargetRPMFactor = Throttle / 100f;

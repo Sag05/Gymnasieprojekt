@@ -21,6 +21,11 @@ namespace Assets.Scripts.Components
     {
         public ProximityFuse(Entity entity) : base(entity) { }
         public float ProximityRange { get; set; }
+
+
+        public void Start()
+        {
+        }
     }
 
     /// <summary>
@@ -31,6 +36,15 @@ namespace Assets.Scripts.Components
     {
         public TimedFuse(Entity entity) : base(entity) { }
         public float FuseTime { get; set; }
+        public void Start()
+        {
+            this.ParentObject.StartCoroutine(this.Countdown());
+        }
+        private IEnumerator Countdown()
+        {
+            yield return new WaitForSeconds(this.FuseTime);
+            this.Warhead.Detonate();
+        }
     }
 
     /// <summary>

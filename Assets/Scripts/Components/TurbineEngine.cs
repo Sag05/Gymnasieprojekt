@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.Components
 {
-    public class AircraftEngine : ComponentBase, ITickableComponent
+    public class TurbineEngine : ComponentBase, ITickableComponent
     {
-        public AircraftEngine(Entity entity) : base(entity) { }
+        public TurbineEngine(Entity entity) : base(entity) { }
         #region Variables
         /// <summary>
         /// The maximum RPM of the turbine, measured in RPM

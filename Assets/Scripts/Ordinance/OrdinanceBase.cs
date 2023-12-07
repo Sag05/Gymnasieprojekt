@@ -1,8 +1,5 @@
+using Assets.Scripts.Components;
 using System;
-using System.Collections.Generic;
-using Assets.Scripts;
-using Assets.Scripts.Ordinance;
-using UnityEngine;
 
 namespace Assets.Scripts.Ordinance
 {
@@ -10,20 +7,28 @@ namespace Assets.Scripts.Ordinance
     {
         public OrdinanceBase()
         {
-            configuration = ConfigurationReader.LoadOrdinance(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+            configuration = ConfigurationReader.LoadOrdinance(@".\configs\ordinance\" + gameObject.name + ".cfg", this);
         }
         public OrdinanceConfig configuration;
-        public float Mass { get => mass; set {if (value <= 0) throw new ArgumentOutOfRangeException("Mass", Mass, "Mass can not be less than or equal to 0"); mass = value; } }
-        private float mass;
         
-        /// <summary>
-        /// The type of guidance used by the ordinance
-        /// </summary>
-        public GuidanceType GuidanceType { get; set; }
-
         public void Fire()
         {
-            
+            foreach (ComponentBase component in this.configuration.Components)
+            {
+                if(component is SolidfFuelEngine engine)
+                {
+                    engine.EngineEnabled = true;
+                }
+                else if(component is ProximityFuse proxy)
+                {
+                    proxy.Start();
+                } 
+                else if (component is TimedFuse timed)
+                {
+                    timed.Start();
+                }
+                ///TODO: Implement Guidance
+            }
         }
     }
 }

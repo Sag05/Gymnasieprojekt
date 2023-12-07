@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Ordinance;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Components
@@ -12,7 +11,7 @@ namespace Assets.Scripts.Components
         private int tntEquivelent;
         public string ExplosionFXName { private get; set; }
         private GameObject ExplosionFX;
-        public void Detonate() {}
+        public abstract void Detonate();
     }
 
     public class HEWarhead : Warhead
@@ -21,6 +20,10 @@ namespace Assets.Scripts.Components
         public float BlastRadius { get => blastRadius; set { if (value <= 0) throw new ArgumentOutOfRangeException("BlastRadius", value, "BlastRadius can not be less than or equal to 0!"); blastRadius = value; } }
         private float blastRadius;
 
+        public override void Detonate()
+        {
+
+        }
 
     }
     
@@ -29,5 +32,10 @@ namespace Assets.Scripts.Components
         public HEATWarhead(Entity entity) : base(entity) { }
         public float Penetration { get => penetration; set { if (value <= 0) throw new ArgumentOutOfRangeException("Penetration", value, "Penetration can not be less than or equal to 0!"); penetration = value; } }
         private float penetration;
+
+        public override void Detonate()
+        {
+
+        }
     }
 }
