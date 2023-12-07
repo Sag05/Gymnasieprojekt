@@ -91,12 +91,6 @@ namespace Assets.Scripts.Components
             }
         }
 
-        #region TEST
-        //_ = RippleWeapon(RippleQuantity, RippleDelay);
-        //async Task RippleWeapon(int rippleQuantity, float rippleDelay)
-        //await Task.Delay((int)(rippleDelay * 1000));
-        #endregion
-
         IEnumerator RippleWeapon(int rippleQuantity, float rippleDelay)
         {
             for (int i = 0; i < rippleQuantity; i++)
