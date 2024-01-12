@@ -33,12 +33,13 @@ public class Aircraft : VehicleBase
         base.Model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
 
         //Find Body, LeftWing and RightWing and add colliders
-        this.AircraftConfiguration.Body = base.Model.transform.Find(AircraftConfiguration.BodyName).gameObject;
+        //this.AircraftConfiguration.Body = base.Model.transform.Find(AircraftConfiguration.BodyName).gameObject;
+        this.AircraftConfiguration.Body = this.Model;
         this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
         this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
-        this.AircraftConfiguration.Body.AddComponent<MeshCollider>();
-        this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>();
-        this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>();
+        this.AircraftConfiguration.Body.AddComponent<MeshCollider>().convex = true;
+        this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>().convex = true;
+        this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>().convex = true;
 
 
         gearAnimation = base.Model.AddComponent<Animation>();
