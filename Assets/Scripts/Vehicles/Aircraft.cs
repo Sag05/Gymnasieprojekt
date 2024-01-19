@@ -27,20 +27,22 @@ public class Aircraft : VehicleBase
     }
 
     private void LoadModel(){
-        //model = Instantiate(      (@".\configs\aircrafts\" + AircraftConfiguration.ModelName), transform);
-        //model = Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Models/Aircraft/" + AircraftConfiguration.ModelName), transform);
         base.Model = GameObject.Find(AircraftConfiguration.ModelName);
         base.Model.transform.localScale = Utilities.FloatToVector3(GameManager.scaleFactor);
 
         //Find Body, LeftWing and RightWing and add colliders
-        //this.AircraftConfiguration.Body = base.Model.transform.Find(AircraftConfiguration.BodyName).gameObject;
         this.AircraftConfiguration.Body = this.Model;
+        this.AircraftConfiguration.Body.AddComponent<MeshCollider>().convex = true;
+
         this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
         this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
-        this.AircraftConfiguration.Body.AddComponent<MeshCollider>().convex = true;
         this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>().convex = true;
         this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>().convex = true;
 
+        this.AircraftConfiguration.LeftWheel = GameObject.Find(AircraftConfiguration.LeftWheelName).gameObject;
+        this.AircraftConfiguration.RightWheel = GameObject.Find(AircraftConfiguration.RightWheelName).gameObject;
+        this.AircraftConfiguration.LeftWheel.AddComponent<CapsuleCollider>();
+        this.AircraftConfiguration.RightWheel.AddComponent<CapsuleCollider>();
 
         gearAnimation = base.Model.AddComponent<Animation>();
     }

@@ -16,17 +16,38 @@ public class VehicleLoader : MonoBehaviour
     {
         aircraftPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/aircraft.prefab");
         Debug.Log("Loaded aircraft prefab: " + aircraftPrefab.name);
+
+
+
+        // Load Vehicles From Configs 
+        string[] aircraftConfigs = Directory.GetFiles(aircraftDirectory, "*.cfg");
+        switch (aircraftConfigs.Length)
+        {
+            case 0:
+                Debug.Log("No aircraft configs found.");
+                break;
+            case 1:
+                Debug.Log("Found 1 aircraft config.");
+                break;
+            default:
+                Debug.Log("Found " + aircraftConfigs.Length + " aircraft configs.");
+                break;
+        }
+        
+        
+        
+    }
+
+    private void LoadVehicleSelectionMenu(string[] aircraftConfigs, PlayerController player)
+    {
         selectionMenuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/SelectionMenu.prefab");
         Debug.Log("Loaded selection menu prefab: " + selectionMenuPrefab.name);
         selectionButtonPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/SelectionButton.prefab");
         Debug.Log("Loaded selection button prefab: " + selectionButtonPrefab.name);
 
-        selectionMenu = Instantiate(selectionMenuPrefab);
-
-
         Vector3 buttonPosition = new Vector3(-280, 200, 0);
-        // Load Vehicles From Configs 
-        foreach (string configName in Directory.GetFiles(aircraftDirectory, "*.cfg"))
+        selectionMenu = Instantiate(selectionMenuPrefab);
+        foreach (string configName in aircraftConfigs)
         {
             //Get name of aircraft from config file name
             string aircraftName = configName.Split('\\')[3].Remove(configName.Split('\\')[3].Length - ".cfg".Length);
@@ -47,6 +68,7 @@ public class VehicleLoader : MonoBehaviour
             buttonObject.GetComponentInChildren<TextMeshProUGUI>().text = aircraftName;
         }
     }
+
 
     public void AircraftSlected(string aircraftName, PlayerController player)
     {

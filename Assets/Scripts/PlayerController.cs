@@ -2,6 +2,7 @@ using Assets.Scripts;
 using Assets.Scripts.Components;
 using TMPro;
 using UnityEngine;
+using UnityEditor;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -121,8 +122,11 @@ public class PlayerController : MonoBehaviour
         DebugText = GameObject.Find("DebugText").GetComponent<TextMeshProUGUI>();
         freeTrackClient = gameObject.AddComponent<FreeTrackClientDll64>();
 
-        VehicleLoader vehicleLoader = gameObject.AddComponent<VehicleLoader>();
-        vehicleLoader.LoadVehicleSelectionMenu(this);
+        #region TEMP_AIRCRAFT_SPAWN
+        SelectVehicle(Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/aircraft.prefab")));
+        #endregion
+        //VehicleLoader vehicleLoader = gameObject.AddComponent<VehicleLoader>();
+        //vehicleLoader.LoadVehicleSelectionMenu(this);
     }
 
     void Update()
