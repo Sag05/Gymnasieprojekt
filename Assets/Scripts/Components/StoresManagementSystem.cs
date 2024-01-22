@@ -81,6 +81,7 @@ namespace Assets.Scripts.Components
 
         public void FireSecondaryWeapon()
         {
+            return;
             if (RippleQuantity > 1)
             {
                 this.ParentObject.StartCoroutine(RippleWeapon(RippleQuantity, RippleDelay));

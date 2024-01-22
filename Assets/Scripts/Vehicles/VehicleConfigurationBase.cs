@@ -39,6 +39,8 @@ namespace Assets.Scripts.Vehicles
         public string RightWingName { get; set; }
         public GameObject RightWing { get; set; }
 
+        public string FrontWheelName { get; set; }
+        public GameObject FrontWheel { get; set; }
         public string LeftWheelName { get; set; }
         public GameObject LeftWheel { get; set; }
         public string RightWheelName { get; set; }

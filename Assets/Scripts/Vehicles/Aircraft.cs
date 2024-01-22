@@ -3,6 +3,7 @@ using Assets.Scripts.Vehicles;
 using UnityEngine;
 using System.Linq;
 using Assets.Scripts.Components;
+using UnityEditor;
 
 public class Aircraft : VehicleBase
 {
@@ -10,7 +11,8 @@ public class Aircraft : VehicleBase
     private AircraftConfiguration AircraftConfiguration;
     private DoubleVector3 steering = new DoubleVector3();
     public float Throttle { get; set; }
-    Animation gearAnimation;
+    Animation animation;
+    PhysicMaterial wheelMaterial;
     #endregion
     
     public void SwitchSOI()
@@ -33,23 +35,32 @@ public class Aircraft : VehicleBase
         //Find Body, LeftWing and RightWing and add colliders
         this.AircraftConfiguration.Body = this.Model;
         this.AircraftConfiguration.Body.AddComponent<MeshCollider>().convex = true;
-
+        
+        #region Wings
         this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
         this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
         this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>().convex = true;
         this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>().convex = true;
+        #endregion
 
-        this.AircraftConfiguration.LeftWheel = GameObject.Find(AircraftConfiguration.LeftWheelName).gameObject;
-        this.AircraftConfiguration.RightWheel = GameObject.Find(AircraftConfiguration.RightWheelName).gameObject;
-        this.AircraftConfiguration.LeftWheel.AddComponent<CapsuleCollider>();
-        this.AircraftConfiguration.RightWheel.AddComponent<CapsuleCollider>();
+        #region Wheels
+        this.AircraftConfiguration.FrontWheel = GameObject.Find(AircraftConfiguration.FrontWheelName);
+        this.AircraftConfiguration.FrontWheel.AddComponent<CapsuleCollider>().material = wheelMaterial;
 
-        gearAnimation = base.Model.AddComponent<Animation>();
+        this.AircraftConfiguration.LeftWheel = GameObject.Find(AircraftConfiguration.LeftWheelName);
+        this.AircraftConfiguration.LeftWheel.AddComponent<CapsuleCollider>().material = wheelMaterial;
+        
+        this.AircraftConfiguration.RightWheel = GameObject.Find(AircraftConfiguration.RightWheelName);
+        this.AircraftConfiguration.RightWheel.AddComponent<CapsuleCollider>().material = wheelMaterial;
+        #endregion
+
+        animation = base.Model.GetComponent<Animation>();
     }
 
     new void Start()
     {
-        this.AircraftConfiguration = ConfigurationReader.LoadAircraft(@".\configs\aircrafts\" + gameObject.name + ".cfg", this);
+        this.wheelMaterial = AssetDatabase.LoadAllAssetsAtPath("Assets/Materials//Wheel.physicMaterial").OfType<PhysicMaterial>().FirstOrDefault();
+        this.AircraftConfiguration = ConfigurationReader.LoadAircraft(@".\configs\aircrafts\" + "F6"  /*gameObject.name*/ + ".cfg", this);
         base.EntityComponents.AddComponents(this.AircraftConfiguration.EntityComponents.ToArray());
 
         base.Start();
@@ -196,9 +207,21 @@ public class Aircraft : VehicleBase
         base.PostUpdate();
     }
 
-    public void AnimationHandler()
+    public void AnimationHandler(string animationName)
     {
-
+        Animator animator = base.Model.GetComponent<Animator>();
+        animator.Play(animationName);
+        /*
+        if(animation.isPlaying)
+        {
+            Debug.Log("Animation already playing");
+        }
+        else
+        {
+            animation.Play(animationName);
+            Debug.Log("Playing animation " + animationName);
+        }
+        */
     }
 
 }

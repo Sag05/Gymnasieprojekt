@@ -21,12 +21,35 @@ public class PlayerController : MonoBehaviour
     public void OnMovement(InputValue value)
     {
         ControlInput = value.Get<Vector3>();
-        DebugText.text = ControlInput.ToString("0.0");
     }
 
     public void OnThrottle(InputValue value)
     {
         ThrottleInput = value.Get<float>();
+    }
+
+    public void OnGear()
+    {
+        Debug.Log("Input: Gear");
+        controlledVehicle.GetComponent<Aircraft>().AnimationHandler("Gear.Gear");
+    }
+
+    public void OnFlaps()
+    {
+        //NOT YET IMPLEMENTED 
+        //controlledVehicle.GetComponent<Aircraft>().AnimationHandler("Flaps");
+    }
+
+    public void OnAirbrake()
+    {
+        Debug.Log("input: Airbrake");
+        controlledVehicle.GetComponent<Aircraft>().AnimationHandler("Airbrake.Airbrake");
+    }
+
+    public void OnCanopy()
+    {
+        Debug.Log("input: Canopy"); 
+        controlledVehicle.GetComponent<Aircraft>().AnimationHandler("Canopy.Canopy");
     }
 
     public void OnDebug()
