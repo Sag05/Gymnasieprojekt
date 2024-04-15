@@ -37,10 +37,11 @@ public class Aircraft : VehicleBase
         this.AircraftConfiguration.Body.AddComponent<MeshCollider>().convex = true;
         
         #region Wings
-        this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
-        this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
-        this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>().convex = true;
-        this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>().convex = true;
+        Debug.Log("LeftWing: " + AircraftConfiguration.LeftWingName + " RightWing: " + AircraftConfiguration.RightWingName);
+        //this.AircraftConfiguration.LeftWing = base.Model.transform.Find(AircraftConfiguration.LeftWingName).gameObject;
+        //this.AircraftConfiguration.RightWing = base.Model.transform.Find(AircraftConfiguration.RightWingName).gameObject;
+        //this.AircraftConfiguration.LeftWing.AddComponent<MeshCollider>().convex = true;
+        //this.AircraftConfiguration.RightWing.AddComponent<MeshCollider>().convex = true;
         #endregion
 
         #region Wheels
@@ -210,7 +211,7 @@ public class Aircraft : VehicleBase
     public void AnimationHandler(string animationName)
     {
         Animator animator = base.Model.GetComponent<Animator>();
-        animator.Play(animationName);
+        //animator.Play(animationName);
         /*
         if(animation.isPlaying)
         {
