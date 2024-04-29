@@ -45,19 +45,19 @@ namespace Assets.Scripts.Components
         public bool PostTickComponent()
         {
             //Set speed text, display in km/h
-            this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0");
+            this.speedText.text = (this.Velocity.magnitude * 3.6f / GameManager.scaleFactor).ToString("0" + "km/h");
             this.gForceText.text = (GForce + 1).ToString("0.0") + "G";
             this.machText.text = (this.Velocity.magnitude / 340.29f / GameManager.scaleFactor).ToString("0.00") + "M";
 
             //Set altitude text. if radar altitude is less than 200(2000m), use that instead
             if (this.RadarAltitude < 200 && this.RadarAltitude > 0)
             {
-                this.altitudeText.text = (this.RadarAltitude / GameManager.scaleFactor).ToString("0");
+                this.altitudeText.text = (this.RadarAltitude / GameManager.scaleFactor).ToString("0") + "m";
                 this.radarAltitudeIndicator.enabled = true;
             }
             else
             {
-                this.altitudeText.text = (this.Altitude / GameManager.scaleFactor).ToString("0");
+                this.altitudeText.text = (this.Altitude / GameManager.scaleFactor).ToString("0") + "m";
                 this.radarAltitudeIndicator.enabled = false;
             }
             return true;

@@ -33,9 +33,6 @@ public class VehicleLoader : MonoBehaviour
                 Debug.Log("Found " + aircraftConfigs.Length + " aircraft configs.");
                 break;
         }
-        
-        
-        
     }
 
     private void LoadVehicleSelectionMenu(string[] aircraftConfigs, PlayerController player)
@@ -72,9 +69,12 @@ public class VehicleLoader : MonoBehaviour
 
     public void AircraftSlected(string aircraftName, PlayerController player)
     {
+        Vector3 position = new Vector3(0, 100, 0);
+        Quaternion rotation = new Quaternion(0, 0, 0, 0);
         Destroy(selectionMenu);
         Debug.Log("Attempting to load " + aircraftName);
-        GameObject newAircraft = Instantiate(aircraftPrefab);
+        GameObject newAircraft = Instantiate(aircraftPrefab, position, rotation);
+        Debug.Log("Instantiated " + aircraftName + " at " + position + " with " + rotation.eulerAngles + " rotation.");
         newAircraft.name = aircraftName;
         Debug.Log("Loaded " + aircraftName);
         player.SelectVehicle(newAircraft);

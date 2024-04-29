@@ -146,7 +146,9 @@ public class PlayerController : MonoBehaviour
         freeTrackClient = gameObject.AddComponent<FreeTrackClientDll64>();
 
         #region TEMP_AIRCRAFT_SPAWN
-        SelectVehicle(Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/aircraft.prefab")));
+        Vector3 position = new Vector3(0, 100, 0);
+        Quaternion rotation = new Quaternion(0, 0, 0, 0);
+        SelectVehicle(Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/aircraft.prefab"), position, rotation));
         #endregion
         //VehicleLoader vehicleLoader = gameObject.AddComponent<VehicleLoader>();
         //vehicleLoader.LoadVehicleSelectionMenu(this);
